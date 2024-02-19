@@ -1,4 +1,7 @@
-﻿namespace BW_BE_S4_Ecommerce
+﻿using System.Configuration;
+using System.Data.SqlClient;
+
+namespace BW_BE_S4_Ecommerce
 {
     public static class Db
     {
