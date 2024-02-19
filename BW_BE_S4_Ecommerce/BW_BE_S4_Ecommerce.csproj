@@ -64,13 +64,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Details.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Home.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="Register.aspx" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Db.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
