@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace BW_BE_S4_Ecommerce
 {
@@ -22,34 +16,31 @@ namespace BW_BE_S4_Ecommerce
             string password = passwordBox.Text;
 
 
+            Db.conn.Open();
 
-            using (SqlConnection conn = new SqlConnection(Db.conn.ConnectionString))
+            string query = "SELECT COUNT(*) FROM Utente WHERE Username= @username AND Password = @Password";
+
+
+            using (SqlCommand cmd = new SqlCommand(query, Db.conn))
             {
-                conn.Open();
+                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@password", password);
 
-                string query = "SELECT COUNT(*) FROM Utente WHERE Username= @username AND Password = @Password";
 
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                int count = (int)cmd.ExecuteScalar();
+
+                if (count > 0)
                 {
-                    cmd.Parameters.AddWithValue("username", username);
-                    cmd.Parameters.AddWithValue("password", password);  
-
-
-
-                    int count = (int)cmd.ExecuteScalar();
-
-                    if (count > 0)
-                    {
-                        Response.Redirect("Home.aspx");
-                    }
-                    else
-                    {
-                        Label3.Text = "Dati Errati";
-                    }
-
+                    Response.Redirect("Home.aspx");
                 }
+                else
+                {
+                    Label3.Text = "Dati Errati";
+                }
+
             }
+
         }
     }
 }
