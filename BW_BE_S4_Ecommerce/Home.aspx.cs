@@ -15,7 +15,7 @@ namespace BW_BE_S4_Ecommerce
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Popolare la dropdown con tutte le categorie
+            
             Db.conn.Open();
 
             try

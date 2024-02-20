@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Web;
 
 namespace BW_BE_S4_Ecommerce
 {
@@ -7,7 +8,10 @@ namespace BW_BE_S4_Ecommerce
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (Request.Cookies["UserDetails"] != null)
+            {
+                Response.Redirect("Home.aspx");
+            }
         }
 
         protected void Login_Click(object sender, EventArgs e)
@@ -15,32 +19,62 @@ namespace BW_BE_S4_Ecommerce
             string username = usernameBox.Text;
             string password = passwordBox.Text;
 
-
-            Db.conn.Open();
-
-            string query = "SELECT COUNT(*) FROM Utente WHERE Username= @username AND Password = @Password";
-
-
-            using (SqlCommand cmd = new SqlCommand(query, Db.conn))
+            try
             {
-                cmd.Parameters.AddWithValue("@username", username);
-                cmd.Parameters.AddWithValue("@password", password);
+                Db.conn.Open();
 
+                string query = "SELECT Id, Email FROM Utente WHERE Username = @username AND Password = @Password";
 
-
-                int count = (int)cmd.ExecuteScalar();
-
-                if (count > 0)
+                using (SqlCommand cmd = new SqlCommand(query, Db.conn))
                 {
-                    Response.Redirect("Home.aspx");
-                }
-                else
-                {
-                    Label3.Text = "Dati Errati";
-                }
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", password);
 
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        int userId = (int)reader["Id"];
+                        string userEmail = reader["Email"].ToString();
+
+                        reader.Close();
+
+                        Db.conn.Close();
+
+                        HttpCookie userCookie = new HttpCookie("UserDetails");
+                        userCookie["UserId"] = userId.ToString();
+                        userCookie["UserEmail"] = userEmail;
+
+                        userCookie.Expires = DateTime.Now.AddDays(1); 
+
+                        Response.Cookies.Add(userCookie);
+
+                        Response.Redirect("Home.aspx");
+                    }
+                    else
+                    {
+                        reader.Close();
+
+                        Db.conn.Close();
+
+                        Label3.Text = "Dati Errati";
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                Label3.Text = "Si è verificato un errore durante il tentativo di accesso.";
+            }
+        }
 
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            if (Request.Cookies["UserDetails"] != null)
+            {
+                HttpCookie userCookie = Request.Cookies["UserDetails"];
+                userCookie.Expires = DateTime.Now.AddDays(-21);
+                Response.Cookies.Add(userCookie);
+            }
+            Response.Redirect("Login.aspx");
         }
     }
 }
