@@ -49,24 +49,23 @@ namespace BW_BE_S4_Ecommerce
             try
             {
                 Db.conn.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO ProdottoInCarrello(ProdottoID, Quantita) VALUES (@ProductID, @Quantita)", Db.conn);
-                cmd.Parameters.AddWithValue("@ProductID", ProductID);
-
-                if (int.TryParse(txtQuantity.Text, out int quantita))
+                
+                if (int.TryParse(txtQuantity.Text, out int quantita) && quantita > 0) 
                 {
+                    SqlCommand cmd = new SqlCommand("INSERT INTO ProdottoInCarrello(ProdottoID, Quantita) VALUES (@ProductID, @Quantita)", Db.conn);
+                    cmd.Parameters.AddWithValue("@ProductID", ProductID);
                     cmd.Parameters.AddWithValue("@Quantita", quantita);
+
+                    int affectedRows = cmd.ExecuteNonQuery();
+
+                    if (affectedRows > 0)
+                    {
+                        Response.Write("Prodotto aggiunto al carrello con successo!");
+                    }
                 }
                 else
                 {
-                    Response.Write("La quantitá non é un numero valido");
-                    return;
-                }
-
-                int affectedRows = cmd.ExecuteNonQuery();
-
-                if (affectedRows > 0)
-                {
-                    Response.Write("Prodotto aggiunto al carrello con successo!");
+                    Response.Write("La quantità non è un numero valido o è uguale a zero.");
                 }
             }
             catch (Exception ex)
@@ -83,25 +82,51 @@ namespace BW_BE_S4_Ecommerce
             try
             {
                 Db.conn.Open();
-                SqlCommand cmd = new SqlCommand($"DELETE FROM Prodotto WHERE id={ProductID}", Db.conn);
-                SqlDataReader dataReader = cmd.ExecuteReader();
-                int rowsAffected = cmd.ExecuteNonQuery();
 
-                if (rowsAffected > 0)
+           
+                SqlCommand checkRelatedCmd = new SqlCommand($"SELECT COUNT(*) FROM ProdottoInCarrello WHERE ProdottoId = {ProductID}", Db.conn);
+                int relatedCount = (int)checkRelatedCmd.ExecuteScalar();
+
+                if (relatedCount > 0)
                 {
-                    Response.Write("Prodotto eliminato con successso");
-                    Response.Redirect("Home.aspx");
+                
+                    Response.Write("Ci sono elementi nel carrello correlati a questo prodotto. L'eliminazione comporterà la rimozione di tali elementi dal carrello. Continuare con l'eliminazione?");
+
+                   
+                    SqlCommand deleteProductCmd = new SqlCommand($"DELETE FROM Prodotto WHERE id = {ProductID}", Db.conn);
+                    int rowsAffected = deleteProductCmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        
+                        Response.Write("Prodotto eliminato con successo");
+                        Response.Redirect("Home.aspx");
+                    }
+                    else
+                    {
+                        Response.Write("Impossibile eliminare il prodotto.");
+                    }
                 }
                 else
                 {
+                  
+                    SqlCommand deleteProductCmd = new SqlCommand($"DELETE FROM Prodotto WHERE id = {ProductID}", Db.conn);
+                    int rowsAffected = deleteProductCmd.ExecuteNonQuery();
 
-                    Response.Write("Impossibile eliminare il prodotto.");
+                    if (rowsAffected > 0)
+                    {
+                        
+                        Response.Write("Prodotto eliminato con successo");
+                        
+                    }
+                    else
+                    {
+                        Response.Write("Impossibile eliminare il prodotto.");
+                    }
                 }
-
             }
             catch (Exception ex)
             {
-
                 Response.Write(ex.ToString());
             }
             finally
@@ -111,10 +136,9 @@ namespace BW_BE_S4_Ecommerce
                     Db.conn.Close();
                 }
             }
-
-
-
         }
+
+
         protected void btnEdit_Click(object sender, EventArgs e)
         {
             Response.Redirect($"EditProduct.aspx?product={ProductID}");
