@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 
@@ -11,57 +10,84 @@ namespace BW_BE_S4_Ecommerce
         {
             if (!IsPostBack)
             {
-                BindCart();
+                BindCartRepeater();
             }
         }
 
-        private void BindCart()
+        private void BindCartRepeater()
         {
-            DataTable dtCart = GetCartDataFromDb();
-            Carrello.DataSource = dtCart;
-            Carrello.DataBind();
+            int userId = GetCurrentUserId();
+            string selectProductForCartQuery = @"SELECT p.Id AS ProdottoId, p.Nome, p.Prezzo, pc.Quantita FROM Carrello c
+                             JOIN ProdottoInCarrello pc ON c.Id = pc.CarrelloId
+                             JOIN Prodotto p ON pc.ProdottoId = p.Id
+                             WHERE c.UtenteId = @UtenteId";
+
+            try
+            {
+                Db.conn.Open();
+                SqlCommand cmd = new SqlCommand(selectProductForCartQuery, Db.conn);
+                cmd.Parameters.AddWithValue("@UtenteId", userId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                CartRepeater.DataSource = reader;
+                CartRepeater.DataBind();
+
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+            }
+            finally
+            {
+                Db.conn.Close();
+            }
         }
 
-        private DataTable GetCartDataFromDb()
-        {
-            DataTable dtCart = new DataTable();
-
-            Db.conn.Open();
-
-            SqlCommand cmd = new SqlCommand("SELECT Nome, Prezzo FROM Carrello", Db.conn);
-            SqlDataReader CarrelloTableReader = cmd.ExecuteReader();
-            dtCart.Load(CarrelloTableReader);
-            CarrelloTableReader.Close();
-
-            Db.conn.Close();
-
-            return dtCart;
-        }
-
-        protected void Carrello_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void CartRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
             if (e.CommandName == "Rimuovi")
             {
-                int productId = Convert.ToInt32(e.CommandArgument);
+                int prodottoId = Convert.ToInt32(e.CommandArgument);
 
-                RemoveProductFromDb(productId);
+                int utenteId = GetCurrentUserId();
 
-                BindCart();
+                RemoveProductFromCart(utenteId, prodottoId);
+
+                BindCartRepeater();
             }
         }
 
-        private void RemoveProductFromDb(int productId)
+        private void RemoveProductFromCart(int utenteId, int prodottoId)
         {
-            Db.conn.Open();
+            string deleteQuery = @"DELETE FROM ProdottoInCarrello 
+WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND ProdottoId = @ProdottoId";
 
-            SqlCommand cmd = new SqlCommand("DELETE FROM Prodotto WHERE Id = @ProductId", Db.conn);
+            try
+            {
+                Db.conn.Open();
 
-            // Evita attacchi SQL Injection
-            cmd.Parameters.AddWithValue("@ProductId", productId);
+                SqlCommand cmd = new SqlCommand(deleteQuery, Db.conn);
+                cmd.Parameters.AddWithValue("@UtenteId", utenteId);
+                cmd.Parameters.AddWithValue("@ProdottoId", prodottoId);
 
-            cmd.ExecuteNonQuery();
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Db.conn.Close();
+            }
 
-            Db.conn.Close();
+        }
+
+        private int GetCurrentUserId()
+        {
+            // unico utente col carrello al momento. Ha id 6
+            return 6;
         }
     }
 }

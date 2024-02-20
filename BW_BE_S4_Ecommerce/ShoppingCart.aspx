@@ -1,14 +1,34 @@
 ﻿<%@ Page Title="Carrello" Language="C#" MasterPageFile="~/Template.Master" AutoEventWireup="true" CodeBehind="ShoppingCart.aspx.cs" Inherits="BW_BE_S4_Ecommerce.ShoppingCart" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="main" runat="server">
-    <div>
-        <asp:GridView ID="Carrello" runat="server" AutoGenerateColumns="false" OnRowCommand="Carrello_RowCommand">
-            <Columns>
-                <asp:BoundField DataField="Nome" HeaderText="Nome" />
-                <asp:BoundField DataField="Prezzo" HeaderText="Prezzo" />
-                <asp:ButtonField ButtonType="Button" CommandName="Rimuovi" Text="Rimuovi" />
-            </Columns>
-        </asp:GridView>
+    <div class="container">
+        <div class="row">
+            <asp:Repeater ID="CartRepeater" runat="server" OnItemCommand="CartRepeater_ItemCommand">
+                <ItemTemplate>
+                    <div class="col-12 d-flex gap-3 align-items-center mb-3">
+
+                        <div>
+                            <p><%# Eval("Nome") %></p>
+                        </div>
+
+                        <div>
+                            <p><%# Eval("Prezzo") %></p>
+                        </div>
+
+                        <div>
+                            <p><%# Eval("Quantita") %></p>
+                        </div>
+
+                        <div>
+                            <asp:Button runat="server" ID="RimuoviBtn" CommandName="Rimuovi" Text="Rimuovi" CommandArgument='<%# Eval("ProdottoId") %>' />
+                        </div>
+
+                    </div>
+                </ItemTemplate>
+            </asp:Repeater>
+        </div>
+
     </div>
 </asp:Content>
