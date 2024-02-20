@@ -49,23 +49,24 @@ namespace BW_BE_S4_Ecommerce
             try
             {
                 Db.conn.Open();
-                
-                if (int.TryParse(txtQuantity.Text, out int quantita) && quantita > 0) 
+                SqlCommand cmd = new SqlCommand("INSERT INTO ProdottoInCarello(ProdottoID, Quantita) VALUES (@ProductID, @Quantita)", Db.conn);
+                cmd.Parameters.AddWithValue("@ProductID", ProductID);
+
+                if (int.TryParse(txtQuantity.Text, out int quantita))
                 {
-                    SqlCommand cmd = new SqlCommand("INSERT INTO ProdottoInCarrello(ProdottoID, Quantita) VALUES (@ProductID, @Quantita)", Db.conn);
-                    cmd.Parameters.AddWithValue("@ProductID", ProductID);
                     cmd.Parameters.AddWithValue("@Quantita", quantita);
-
-                    int affectedRows = cmd.ExecuteNonQuery();
-
-                    if (affectedRows > 0)
-                    {
-                        Response.Write("Prodotto aggiunto al carrello con successo!");
-                    }
                 }
                 else
                 {
-                    Response.Write("La quantità non è un numero valido o è uguale a zero.");
+                    Response.Write("La quantitá non é un numero valido");
+                    return;
+                }
+
+                int affectedRows = cmd.ExecuteNonQuery();
+
+                if (affectedRows > 0)
+                {
+                    Response.Write("Prodotto aggiunto al carrello con successo!");
                 }
             }
             catch (Exception ex)
@@ -83,46 +84,22 @@ namespace BW_BE_S4_Ecommerce
             {
                 Db.conn.Open();
 
-           
-                SqlCommand checkRelatedCmd = new SqlCommand($"SELECT COUNT(*) FROM ProdottoInCarrello WHERE ProdottoId = {ProductID}", Db.conn);
-                int relatedCount = (int)checkRelatedCmd.ExecuteScalar();
+                // Elimina i record correlati nella tabella ProdottoInCarrello
+                SqlCommand deleteRelatedCmd = new SqlCommand($"DELETE FROM ProdottoInCarrello WHERE ProdottoId = {ProductID}", Db.conn);
+                deleteRelatedCmd.ExecuteNonQuery();
 
-                if (relatedCount > 0)
+                // Elimina il prodotto dalla tabella Prodotto
+                SqlCommand deleteProductCmd = new SqlCommand($"DELETE FROM Prodotto WHERE id = {ProductID}", Db.conn);
+                int rowsAffected = deleteProductCmd.ExecuteNonQuery();
+
+                if (rowsAffected > 0)
                 {
-                
-                    Response.Write("Ci sono elementi nel carrello correlati a questo prodotto. L'eliminazione comporterà la rimozione di tali elementi dal carrello. Continuare con l'eliminazione?");
-
-                   
-                    SqlCommand deleteProductCmd = new SqlCommand($"DELETE FROM Prodotto WHERE id = {ProductID}", Db.conn);
-                    int rowsAffected = deleteProductCmd.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        
-                        Response.Write("Prodotto eliminato con successo");
-                        Response.Redirect("Home.aspx");
-                    }
-                    else
-                    {
-                        Response.Write("Impossibile eliminare il prodotto.");
-                    }
+                    Response.Write("Prodotto eliminato con successo");
+                  
                 }
                 else
                 {
-                  
-                    SqlCommand deleteProductCmd = new SqlCommand($"DELETE FROM Prodotto WHERE id = {ProductID}", Db.conn);
-                    int rowsAffected = deleteProductCmd.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        
-                        Response.Write("Prodotto eliminato con successo");
-                        
-                    }
-                    else
-                    {
-                        Response.Write("Impossibile eliminare il prodotto.");
-                    }
+                    Response.Write("Impossibile eliminare il prodotto.");
                 }
             }
             catch (Exception ex)
@@ -137,6 +114,7 @@ namespace BW_BE_S4_Ecommerce
                 }
             }
         }
+
 
 
         protected void btnEdit_Click(object sender, EventArgs e)
