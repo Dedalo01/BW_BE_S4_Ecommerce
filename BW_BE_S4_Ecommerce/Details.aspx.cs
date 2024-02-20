@@ -32,9 +32,9 @@ namespace BW_BE_S4_Ecommerce
                 {
                     dataReader.Read();
                     txtProduct.InnerText = dataReader["Nome"].ToString();
-                    img.Src = dataReader["Image"].ToString();
+                    img.Src = dataReader["ImmagineUrl"].ToString();
                     txtDescription.InnerText = dataReader["Descrizione"].ToString();
-                    txtPrice.InnerText = $"{dataReader["prezzo"]}€";
+                    txtPrice.InnerText = $"{dataReader["Prezzo"]}€";
                 }
             }
             catch (Exception ex)
@@ -52,7 +52,10 @@ namespace BW_BE_S4_Ecommerce
 
         protected void btnAddCart_Click(object sender, EventArgs e)
         {
-            int prodId = int.Parse(ProductID);
+            int prodId = int.Parse(ProductID); 
+            int quantity = int.Parse(txtQuantity.Text); //come la implemento?
+
+
             List<int> products;
             if (Session["ProductID"] == null)
             {
@@ -73,7 +76,7 @@ namespace BW_BE_S4_Ecommerce
             try
             {
                 Db.conn.Open();
-                SqlCommand cmd = new SqlCommand($"DELETE FROM Prodotti WHERE id={ProductID}", Db.conn);
+                SqlCommand cmd = new SqlCommand($"DELETE FROM Prodotto WHERE id={ProductID}", Db.conn);
                 SqlDataReader dataReader = cmd.ExecuteReader();
                 int rowsAffected = cmd.ExecuteNonQuery();
 
@@ -108,7 +111,7 @@ namespace BW_BE_S4_Ecommerce
 
         protected void btnEdit_Click(object sender, EventArgs e)
         {
-            Response.Redirect($"Edit.aspx?product={ProductID}");
+            Response.Redirect($"EditProduct.aspx?product={ProductID}");
         }
 
     }

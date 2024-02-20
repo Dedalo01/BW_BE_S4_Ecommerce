@@ -51,6 +51,15 @@ namespace BW_BE_S4_Ecommerce
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl txtPrice;
 
         /// <summary>
+        /// Controllo txtQuantity.
+        /// </summary>
+        /// <remarks>
+        /// Campo generato automaticamente.
+        /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtQuantity;
+
+        /// <summary>
         /// Controllo btnAddCart.
         /// </summary>
         /// <remarks>
