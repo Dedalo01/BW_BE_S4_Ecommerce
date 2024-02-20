@@ -3,7 +3,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="main" runat="server">
     <div>
     <h2 id="txtProduct" runat="server"></h2>
-    <img id="img" alt=""  runat="server" />
+    <img id="img" alt=""  runat="server" src="#"/>
     <p id="txtDescription" runat="server"></p>
     <p id="txtPrice" runat="server"></p>
     <asp:Button id="btnAddCart" runat="server" Text="Aggiungi al carrello" OnClick="btnAddCart_Click" />
