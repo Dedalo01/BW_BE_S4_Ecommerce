@@ -12,6 +12,7 @@ namespace BW_BE_S4_Ecommerce
             {
                 BindCartRepeater();
             }
+
         }
 
         private void BindCartRepeater()
@@ -21,6 +22,9 @@ namespace BW_BE_S4_Ecommerce
                              JOIN ProdottoInCarrello pc ON c.Id = pc.CarrelloId
                              JOIN Prodotto p ON pc.ProdottoId = p.Id
                              WHERE c.UtenteId = @UtenteId";
+
+            string query2 = @"SELECT pc.Id AS ProdottoId, p.Nome, p.Prezzo, pc.Quantita FROM ProdottoInCarrello pc
+            JOIN Prodotto p ON pc.ProdottoId = p.Id";
 
             Db.conn.Open();
             SqlCommand cmd = new SqlCommand(selectProductForCartQuery, Db.conn);
@@ -43,6 +47,7 @@ namespace BW_BE_S4_Ecommerce
             if (e.CommandName == "Rimuovi")
             {
                 int prodottoId = Convert.ToInt32(e.CommandArgument);
+                Response.Write("Prodotto id " + prodottoId);
                 int utenteId = GetCurrentUserId();
 
                 RemoveProductFromCart(utenteId, prodottoId);
@@ -56,14 +61,26 @@ namespace BW_BE_S4_Ecommerce
             string deleteQuery = @"DELETE FROM ProdottoInCarrello 
 WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND ProdottoId = @ProdottoId";
 
-            Db.conn.Open();
-            SqlCommand cmd = new SqlCommand(deleteQuery, Db.conn);
-            cmd.Parameters.AddWithValue("@UtenteId", utenteId);
-            cmd.Parameters.AddWithValue("@ProdottoId", prodottoId);
+            string delete2 = @"DELETE FROM ProdottoInCarrello WHERE Id = @ProdottoId";
+            try
+            {
+                Db.conn.Open();
 
-            cmd.ExecuteNonQuery();
+                SqlCommand cmd = new SqlCommand(deleteQuery, Db.conn);
+                cmd.Parameters.AddWithValue("@UtenteId", utenteId);
+                cmd.Parameters.AddWithValue("@ProdottoId", prodottoId);
 
-            Db.conn.Close();
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Db.conn.Close();
+            }
+
         }
 
         private int GetCurrentUserId()
