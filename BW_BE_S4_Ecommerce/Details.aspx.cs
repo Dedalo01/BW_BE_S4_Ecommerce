@@ -28,9 +28,9 @@ namespace BW_BE_S4_Ecommerce
                 {
                     dataReader.Read();
                     txtProduct.InnerText = dataReader["Nome"].ToString();
-                    img.Src = dataReader["Image"].ToString();
+                    img.Src = dataReader["ImmagineUrl"].ToString();
                     txtDescription.InnerText = dataReader["Descrizione"].ToString();
-                    txtPrice.InnerText = $"{dataReader["prezzo"]}€";
+                    txtPrice.InnerText = $"{dataReader["Prezzo"]}€";
                 }
             }
             catch (Exception ex)
@@ -104,7 +104,7 @@ namespace BW_BE_S4_Ecommerce
 
         protected void btnEdit_Click(object sender, EventArgs e)
         {
-            Response.Redirect($"Edit.aspx?product={ProductID}");
+            Response.Redirect($"EditProduct.aspx?product={ProductID}");
         }
 
     }

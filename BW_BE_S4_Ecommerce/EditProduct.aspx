@@ -7,4 +7,5 @@
         IMMAGINE:<asp:TextBox ID="TxtImmagineUrl" runat="server"></asp:TextBox>
     <br />
     <asp:Button ID="BtnUpdate" runat="server" Text="Update" OnClick="BtnUpdate_Click" />
+    <asp:Label ID="LblErrore" runat="server" Text=""></asp:Label>
 </asp:Content>
