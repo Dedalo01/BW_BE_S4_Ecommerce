@@ -11,16 +11,16 @@ namespace BW_BE_S4_Ecommerce
 {
 
 
-    public partial class Home
+    public partial class ShoppingCart
     {
 
         /// <summary>
-        /// Controllo RowCards.
+        /// Controllo Carrello.
         /// </summary>
         /// <remarks>
         /// Campo generato automaticamente.
         /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl RowCards;
+        protected global::System.Web.UI.WebControls.GridView Carrello;
     }
 }
