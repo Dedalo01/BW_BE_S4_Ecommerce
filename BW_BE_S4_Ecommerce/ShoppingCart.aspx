@@ -10,12 +10,11 @@
                     <div class="col-12 d-flex gap-3 align-items-center mb-3">
 
                         <div>
-
-                        <p><%# Eval("Nome") %></p>
+                            <p><%# Eval("Nome") %></p>
                         </div>
-                        <div>
 
-                        <p><%# Eval("Prezzo") %></p>
+                        <div>
+                            <p><%# Eval("Prezzo") %></p>
                         </div>
 
                         <div>
@@ -23,7 +22,7 @@
                         </div>
 
                         <div>
-                        <asp:Button runat="server" Text="Rimuovi" CommandArgument='<%# Eval("ProdottoId") %>' />
+                            <asp:Button runat="server" ID="RimuoviBtn" CommandName="Rimuovi" Text="Rimuovi" CommandArgument='<%# Eval("ProdottoId") %>' />
                         </div>
 
                     </div>
