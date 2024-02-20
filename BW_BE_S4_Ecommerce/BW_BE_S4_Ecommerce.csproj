@@ -65,7 +65,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="EditProduct.aspx" />
-    <Content Include="Details.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Home.aspx" />
     <Content Include="Login.aspx" />
