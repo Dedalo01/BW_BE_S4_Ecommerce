@@ -33,17 +33,16 @@ namespace BW_BE_S4_Ecommerce
                     while (dataReader.Read())
                     {
                         htmlContent += $@"<div class=""col"">
-             <div class=""card h-100"">
-            <img src=""{dataReader["ImmagineUrl"]}"" class=""card-img-top"" alt=""{dataReader["Nome"]}"">
-            <div class=""card-body d-flex flex-column"">
-                <h5 class=""card-title"">{dataReader["Nome"]}</h5>
-                <p class=""card-text"">Prezzo: {dataReader["Prezzo"]}</p>
-                <a href=""Details.aspx?product={dataReader["Id"]}"" class=""btn btn-primary mt-auto"">Dettagli</a>
-
-   
-                    </div>
-                </div>
-            </div>";
+                     <div class=""card h-100"">
+                        <img src=""{dataReader["ImmagineUrl"]}"" class=""card-img-top"" alt=""{dataReader["Nome"]}"">
+                        <div class=""card-body d-flex flex-column"">
+                            <h5 class=""card-title"">{dataReader["Nome"]}</h5>
+                            <p class=""card-text"">Prezzo: {dataReader["Prezzo"]}</p>
+                            <a href=""Details.aspx?product={dataReader["Id"]}"" class=""btn btn-primary mt-auto"">Dettagli</a>
+                       <asp:Button ID=""DeleteButtonClick"" runat=""server"" CommandArgument='<%# Eval(""Id"") %>' Text=""Cancella"" CssClass=""btn"" OnClientClick=""return confirm('Sei sicuro di voler eliminare questo prodotto?')"" OnClick=""BtnDelete_Click"" />
+                        </div>
+                     </div>
+                  </div>";
                     }
                 }
 
@@ -63,35 +62,32 @@ namespace BW_BE_S4_Ecommerce
                 }
             }
         }
-        protected void DeleteButtonClick(object sender, EventArgs e)
+        protected void BtnDelete_Click(object sender, EventArgs e)
         {
+            // Ottieni l'ID del prodotto dal comando del pulsante
             Button btn = (Button)sender;
             string productId = btn.CommandArgument;
 
-            // Apri la connessione al database
-            Db.conn.Open();
-
+            // eliminare la riga dal database
             try
             {
-                // Query SQL per eliminare il prodotto in base all'ID
-                string deleteQuery = $"DELETE FROM Prodotto WHERE Id = {productId}";
-                SqlCommand cmd = new SqlCommand(deleteQuery, Db.conn);
-                int rowsAffected = cmd.ExecuteNonQuery();
+                Db.conn.Open();
+                SqlCommand cmd = new SqlCommand($@"DELETE FROM Prodotto WHERE Id={productId}", Db.conn);
+                int affectedRows = cmd.ExecuteNonQuery();
 
-                // Verifica se l'eliminazione è avvenuta con successo
-                if (rowsAffected > 0)
+                if (affectedRows != 0)
                 {
-                    // Puoi anche aggiungere un messaggio di conferma o aggiornare la pagina
-                    Response.Write("Prodotto eliminato con successo.");
+                    // ridirezionare alla Index
+                    Response.Redirect("Home.aspx");
                 }
                 else
                 {
-                    Response.Write("Errore durante l'eliminazione del prodotto.");
+                    Response.Write("Eliminazione non riuscita");
                 }
             }
             catch (Exception ex)
             {
-                Response.Write(ex.Message);
+                Response.Write(ex.ToString());
             }
             finally
             {
@@ -100,11 +96,7 @@ namespace BW_BE_S4_Ecommerce
                 {
                     Db.conn.Close();
                 }
-
-                // Aggiorna la pagina o esegui altre azioni necessarie dopo l'eliminazione
-                Response.Redirect(Request.RawUrl);
             }
         }
     }
-
 }
