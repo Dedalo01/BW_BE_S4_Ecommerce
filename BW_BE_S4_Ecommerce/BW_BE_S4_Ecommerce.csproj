@@ -65,7 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Details.aspx" />
-    <Content Include="Global.asax" />
+    <Content Include="EditProduct.aspx" />
     <Content Include="Home.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -78,8 +78,12 @@
     <Compile Include="Details.aspx.designer.cs">
       <DependentUpon>Details.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
+    <Compile Include="EditProduct.aspx.cs">
+      <DependentUpon>EditProduct.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditProduct.aspx.designer.cs">
+      <DependentUpon>EditProduct.aspx</DependentUpon>
     </Compile>
     <Compile Include="Home.aspx.cs">
       <DependentUpon>Home.aspx</DependentUpon>
