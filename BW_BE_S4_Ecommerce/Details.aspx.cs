@@ -49,7 +49,7 @@ namespace BW_BE_S4_Ecommerce
             try
             {
                 Db.conn.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO ProdottoInCarello(ProdottoID, Quantita) VALUES (@ProductID, @Quantita)", Db.conn);
+                SqlCommand cmd = new SqlCommand("INSERT INTO ProdottoInCarrello(ProdottoID, Quantita) VALUES (@ProductID, @Quantita)", Db.conn);
                 cmd.Parameters.AddWithValue("@ProductID", ProductID);
 
                 if (int.TryParse(txtQuantity.Text, out int quantita))
