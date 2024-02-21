@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+
 
 namespace BW_BE_S4_Ecommerce
 {
     public partial class Details : System.Web.UI.Page
     {
         private string ProductID;
-
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Request.QueryString["product"] == null)
@@ -46,37 +49,79 @@ namespace BW_BE_S4_Ecommerce
 
         protected void btnAddCart_Click(object sender, EventArgs e)
         {
-            try
-            {
-                Db.conn.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO ProdottoInCarrello(ProdottoID, Quantita) VALUES (@ProductID, @Quantita)", Db.conn);
-                cmd.Parameters.AddWithValue("@ProductID", ProductID);
 
-                if (int.TryParse(txtQuantity.Text, out int quantita))
+            if (Log.log == false)
+            {
+                // COOKIE
+
+                int prodID = int.Parse(ProductID);
+                List<int> products;
+
+                if (Request.Cookies["ProductID"] == null)
                 {
-                    cmd.Parameters.AddWithValue("@Quantita", quantita);
+                    products = new List<int>();
                 }
                 else
                 {
-                    Response.Write("La quantitá non é un numero valido");
-                    return;
+                    products = Request.Cookies["ProductID"].Value.Split(',').Select(int.Parse).ToList();
                 }
+                products.Add(prodID);
 
-                int affectedRows = cmd.ExecuteNonQuery();
+                Response.Cookies["ProductID"].Value = string.Join(",", products);
+                Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(1);
 
-                if (affectedRows > 0)
+                // Session
+                //int prodid = int.Parse(ProductID);
+                //List<int> products;
+
+                //if (Session["productid"] == null)
+                //{
+                //    products = new List<int>();
+                //}
+                //else
+                //{
+                //    products = (List<int>)Session["productid"];
+                //}
+
+                //products.Add(prodid);
+
+                //Session["productid"] = products;
+            }
+            else if (Log.log == true)
+            {
+                try
                 {
-                    Response.Write("Prodotto aggiunto al carrello con successo!");
+                    Db.conn.Open();
+                    SqlCommand cmd = new SqlCommand("INSERT INTO ProdottoInCarrello(ProdottoID, Quantita) VALUES (@ProductID, @Quantita)", Db.conn);
+                    cmd.Parameters.AddWithValue("@ProductID", ProductID);
+
+                    if (int.TryParse(txtQuantity.Text, out int quantita))
+                    {
+                        cmd.Parameters.AddWithValue("@Quantita", quantita);
+                    }
+                    else
+                    {
+                        Response.Write("La quantitá non é un numero valido");
+                        return;
+                    }
+
+                    int affectedRows = cmd.ExecuteNonQuery();
+
+                    if (affectedRows > 0)
+                    {
+                        Response.Write("Prodotto aggiunto al carrello con successo!");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Response.Write("Errore durante l'aggiunta al carrello: " + ex.Message);
+                }
+                finally
+                {
+                    Db.conn.Close();
                 }
             }
-            catch (Exception ex)
-            {
-                Response.Write("Errore durante l'aggiunta al carrello: " + ex.Message);
-            }
-            finally
-            {
-                Db.conn.Close();
-            }
+            
         }
         protected void btnDelete_Click(object sender, EventArgs e)
         {

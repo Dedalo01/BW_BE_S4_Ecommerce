@@ -28,6 +28,24 @@
                     </div>
                 </ItemTemplate>
             </asp:Repeater>
+
+<asp:Repeater ID="rptCartItems" OnItemCommand="rptCartItems_ItemCommand" runat="server">
+    <ItemTemplate>
+        <div>
+            <span><%# Eval("Nome") %></span>
+            <span><%# Eval("Descrizione") %></span>
+            <asp:Button  runat="server" CommandName="Delete"  CommandArgument='<%# Eval("Id") %>' CssClass="btn btn-danger w-75" Text="Delete" OnClientClick="return confirm('sicuro?');" />
+        </div>
+    </ItemTemplate>
+</asp:Repeater>
+
+
+
+
+
+            <asp:Label ID="DebugLabel" runat="server" Text=""></asp:Label>
+            <asp:Label ID="LblProdotto" runat="server" Text=""></asp:Label>
+          
         </div>
 
     </div>
