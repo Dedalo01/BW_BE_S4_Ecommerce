@@ -36,164 +36,236 @@ namespace BW_BE_S4_Ecommerce
         {
 
             HttpCookie cookie = Request.Cookies["ProductID"];
-            List<int> product = new List<int>();
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ID", typeof(int));
+            dt.Columns.Add("Nome", typeof(string));
+            dt.Columns.Add("Prezzo", typeof(double));
 
             if (cookie != null && !string.IsNullOrEmpty(cookie.Value))
             {
                 string[] productIds = cookie.Value.Split(',');
 
-                foreach (string id in productIds)
+                foreach (string idString in productIds)
                 {
-                    if (int.TryParse(id, out int productId))
+                    if (int.TryParse(idString, out int id))
                     {
-                        product.Add(productId);
+                        try
+                        {
+                            
+                            
+                                Db.conn.Open();
+                                SqlCommand cmd = new SqlCommand($"SELECT * FROM Prodotto WHERE ID='{id}'", Db.conn);
+                                SqlDataReader dataReader = cmd.ExecuteReader();
+                                if (dataReader.HasRows)
+                                {
+                                    dataReader.Read();
+                                    dt.Rows.Add(dataReader["ID"], dataReader["Nome"], dataReader["Prezzo"]);
+                                }
+                            
+                        }
+                        catch (Exception ex)
+                        {
+                            Response.Write(ex.ToString());
+                        }
+                        finally
+                        {
+                            if (Db.conn.State == ConnectionState.Open)
+                          {
+                          Db.conn.Close();
+                        }
+                        }
                     }
                 }
             }
 
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Nome", typeof(string));
-            dt.Columns.Add("Descrizione", typeof(string));
-
-            if (product != null)
-            {
-                foreach (int id in product)
-                {
-                    try
-                    {
-                        Db.conn.Open();
-                        SqlCommand cmd = new SqlCommand($"SELECT * FROM Prodotto WHERE Id='{id}'", Db.conn);
-                        SqlDataReader dataReader = cmd.ExecuteReader();
-                        if (dataReader.HasRows)
-                        {
-                            dataReader.Read();
-                            dt.Rows.Add(dataReader["Nome"], dataReader["Descrizione"]);
-
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Response.Write(ex.ToString());
-                    }
-                    finally
-                    {
-                        if(Db.conn.State == ConnectionState.Open) 
-                        {
-                            Db.conn.Close();                        
-                        }
-                    }
-                        
-                }
-            }
-
-            //// COOKIE
-
-            //List<int> products = null;
-
-            //if (Request.Cookies["ProductID"] != null)
-            //{
-            //    HttpCookie cookie = Request.Cookies["ProductID"];
-            //    string[] productIds = cookie.Value.Split(',');
-            //    products = new List<int>();
-
-            //    foreach (string id in productIds)
-            //    {
-            //        if (int.TryParse(id, out int productId))
-            //        {
-            //            products.Add(productId);
-            //        }
-            //    }
-
-            //    DebugLabel.Text = "Numero di prodotti nel cookie: " + products.Count;
-
-            //    foreach (int productId in products)
-            //    {
-            //        try
-            //        {
-            //            Db.conn.Open();
-            //            SqlCommand cmd = new SqlCommand($"SELECT Nome, Descrizione " +
-            //                                             $"FROM Prodotto " +
-            //                                             $"WHERE Id = {productId}", Db.conn);
-
-            //            SqlDataReader reader = cmd.ExecuteReader();
-
-            //            if (reader.Read())
-            //            {
-            //                string nome = reader["Nome"].ToString();
-            //                string descrizione = reader["Descrizione"].ToString();
-
-            //                LblProdotto.Text += $"Nome: {nome}, Descrizione: {descrizione}<br/>";
-            //            }
-            //            reader.Close();
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            Response.Write(ex.ToString());
-            //        }
-            //        finally
-            //        {
-            //            if (Db.conn.State == ConnectionState.Open)
-            //            {
-            //                Db.conn.Close();
-            //            }
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    DebugLabel.Text = "Nessun prodotto nel cookie o i dati non sono stati salvati correttamente.";
-            //}
-
-
-            //// SESSION
-            //    List<int> products = null;
-
-            //    if (Session["ProductID"] != null)
-            //    {
-            //        products = (List<int>)Session["ProductID"];
-
-
-            //        DebugLabel.Text = "Numero di prodotti nella lista: " + products.Count;
-
-
-            //        foreach (int productId in products)
-            //        {
-            //            try
-            //            {
-            //                Db.conn.Open();
-            //                SqlCommand cmd = new SqlCommand($"SELECT Nome, Descrizione " +
-            //                    $"                             FROM Prodotto" +
-            //                    $"                            WHERE Id ={productId} ", Db.conn);
-
-            //                SqlDataReader reader = cmd.ExecuteReader();
-
-            //                if (reader.Read())
-            //                {
-            //                    string nome = reader["Nome"].ToString();
-            //                    string descrizione = reader["Descrizione"].ToString();
-
-            //                    LblProdotto.Text += $"Nome: {nome}, Descrizione: {descrizione}<br/>";
-            //                }
-            //                reader.Close();
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                Response.Write(ex.ToString());
-            //            }
-            //            finally
-            //            {
-            //                if (Db.conn.State == ConnectionState.Open)
-            //                {
-            //                    Db.conn.Close();
-            //                }
-            //            }
-            //        }
-            //    }
-            //    else
-            //    {
-            //        DebugLabel.Text = "Nessun prodotto nella sessione o i dati non sono stati salvati correttamente.";
-            //    }
+            rptCartItems.DataSource = dt;
+            rptCartItems.DataBind();
         }
+
+        //List<int> product = (List<int>)Session["ProductID"];
+        //DataTable dt = new DataTable();
+        //dt.Columns.Add("ID", typeof(int));
+        //dt.Columns.Add("Nome", typeof(string));
+        //dt.Columns.Add("Prezzo", typeof(double));
+
+        //if (product != null)
+        //{
+        //    foreach (int id in product)
+        //    {
+        //        try
+        //        {
+        //            Db.conn.Open();
+        //            SqlCommand cmd = new SqlCommand($"SELECT * FROM Prodotto WHERE ID='{id}'", Db.conn);
+        //            SqlDataReader dataReader = cmd.ExecuteReader();
+        //            if (dataReader.HasRows)
+        //            {
+        //                dataReader.Read();
+        //                dt.Rows.Add(dataReader["ID"], dataReader["Nome"], dataReader["Prezzo"]);
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Response.Write(ex.ToString());
+        //        }
+        //        finally
+        //        {
+        //            if (Db.conn.State == ConnectionState.Open)
+        //            {
+        //                Db.conn.Close();
+        //            }
+        //        }
+        //    }
+        //}
+
+        //rptCartItems.DataSource = dt;
+        //rptCartItems.DataBind();
+
+
+
+        // SESSION
+
+
+
+        //HttpCookie cookie = Request.Cookies["ProductID"];
+        //List<int> product = new List<int>();
+
+        //if (cookie != null && !string.IsNullOrEmpty(cookie.Value))
+        //{
+        //    string[] productIds = cookie.Value.Split(',');
+
+        //    foreach (string id in productIds)
+        //    {
+        //        if (int.TryParse(id, out int productId))
+        //        {
+        //            product.Add(productId);
+        //        }
+        //    }
+        //}
+
+        //DataTable dt = new DataTable();
+        //dt.Columns.Add("Nome", typeof(string));
+        //dt.Columns.Add("Descrizione", typeof(string));
+
+        //if (product != null)
+        //{
+        //    foreach (int id in product)
+        //    {
+        //        try
+        //        {
+        //            Db.conn.Open();
+        //            SqlCommand cmd = new SqlCommand($"SELECT * FROM Prodotto WHERE Id='{id}'", Db.conn);
+        //            SqlDataReader dataReader = cmd.ExecuteReader();
+        //            if (dataReader.HasRows)
+        //            {
+        //                dataReader.Read();
+        //                dt.Rows.Add(dataReader["Nome"], dataReader["Descrizione"]);
+
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Response.Write(ex.ToString());
+        //        }
+        //        finally
+        //        {
+        //            if(Db.conn.State == ConnectionState.Open) 
+        //            {
+        //                Db.conn.Close();                        
+        //            }
+        //        }
+
+        //    }
+        //}
+
+        //// COOKIE
+
+        //List<int> products = null;
+
+        //if (Request.Cookies["ProductID"] != null)
+        //{
+        //    HttpCookie cookie = Request.Cookies["ProductID"];
+        //    string[] productIds = cookie.Value.Split(',');
+        //    products = new List<int>();
+
+        //    foreach (string id in productIds)
+        //    {
+        //        if (int.TryParse(id, out int productId))
+        //        {
+        //            products.Add(productId);
+        //        }
+        //    }
+
+        //    DebugLabel.Text = "Numero di prodotti nel cookie: " + products.Count;
+
+        //    foreach (int productId in products)
+        //    {
+        //        try
+        //        {
+        //            Db.conn.Open();
+        //            SqlCommand cmd = new SqlCommand($"SELECT Nome, Descrizione " +
+        //                                             $"FROM Prodotto " +
+        //                                             $"WHERE Id = {productId}", Db.conn);
+
+        //            SqlDataReader reader = cmd.ExecuteReader();
+
+        //            if (reader.Read())
+        //            {
+        //                string nome = reader["Nome"].ToString();
+        //                string descrizione = reader["Descrizione"].ToString();
+
+        //                LblProdotto.Text += $"Nome: {nome}, Descrizione: {descrizione}<br/>";
+        //            }
+        //            reader.Close();
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Response.Write(ex.ToString());
+        //        }
+        //        finally
+        //        {
+        //            if (Db.conn.State == ConnectionState.Open)
+        //            {
+        //                Db.conn.Close();
+        //            }
+        //        }
+        //    }
+        //}
+        //else
+        //{
+        //    DebugLabel.Text = "Nessun prodotto nel cookie o i dati non sono stati salvati correttamente.";
+        //}
+
+
+
+
+
+
+
+        //protected void rptCartItems_ItemCommand(object source, RepeaterCommandEventArgs e)
+        //{
+        //    if (e.CommandName == "Delete")
+        //    {
+        //        int productId = Convert.ToInt32(e.CommandArgument);
+        //        HttpCookie cookie = Request.Cookies["ProductID"];
+
+        //        if (cookie != null && !string.IsNullOrEmpty(cookie.Value))
+        //        {
+        //            List<int> productIds = cookie.Value.Split(',').Select(id => Convert.ToInt32(id)).ToList();
+
+        //            if (productIds.Contains(productId))
+        //            {
+        //                productIds.Remove(productId);
+
+
+        //                cookie.Value = string.Join(",", productIds);
+        //                Response.Cookies.Add(cookie);
+
+        //                RetrieveDataFromSession();
+        //            }
+        //        }
+        //    }
+        //}
 
         protected void rptCartItems_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
@@ -210,7 +282,6 @@ namespace BW_BE_S4_Ecommerce
                     {
                         productIds.Remove(productId);
 
-                        
                         cookie.Value = string.Join(",", productIds);
                         Response.Cookies.Add(cookie);
 
@@ -219,6 +290,23 @@ namespace BW_BE_S4_Ecommerce
                 }
             }
         }
+
+
+        //protected void rptCartItems_ItemCommand(object source, RepeaterCommandEventArgs e)
+        //{
+        //    if (e.CommandName == "Delete")
+        //    {
+        //        int productId = Convert.ToInt32(e.CommandArgument);
+        //        List<int> product = (List<int>)Session["ProductID"];
+
+        //        if (product != null)
+        //        {
+        //            product.Remove(productId);
+        //            Session["ProductID"] = product;
+        //            RetrieveDataFromSession();
+        //        }
+        //    }
+        //}
 
         private void BindCartRepeater()
         {
@@ -292,6 +380,14 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
                 Db.conn.Close();
             }
 
+        }
+
+        protected void btnClearSession_Click(object sender, EventArgs e)
+        {
+
+            Session.Clear();
+
+            RetrieveDataFromSession();
         }
 
         private int GetCurrentUserId()

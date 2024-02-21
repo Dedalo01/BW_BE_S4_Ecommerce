@@ -54,38 +54,56 @@ namespace BW_BE_S4_Ecommerce
             {
                 // COOKIE
 
-                int prodID = int.Parse(ProductID);
-                List<int> products;
-
-                if (Request.Cookies["ProductID"] == null)
+                int prodID;
+                if (int.TryParse(ProductID, out prodID))
                 {
-                    products = new List<int>();
-                }
-                else
-                {
-                    products = Request.Cookies["ProductID"].Value.Split(',').Select(int.Parse).ToList();
-                }
-                products.Add(prodID);
+                    List<int> products;
 
-                Response.Cookies["ProductID"].Value = string.Join(",", products);
-                Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(1);
+                    if (Request.Cookies["ProductID"] == null || string.IsNullOrEmpty(Request.Cookies["ProductID"].Value))
+                    {
+                        products = new List<int>();
+                    }
+                    else
+                    {
+                        string[] productIDs = Request.Cookies["ProductID"].Value.Split(',');
+                        products = new List<int>();
 
-                // Session
-                //int prodid = int.Parse(ProductID);
+                        foreach (string id in productIDs)
+                        {
+                            int parsedID;
+                            if (int.TryParse(id, out parsedID))
+                            {
+                                products.Add(parsedID);
+                            }
+                            else
+                            {
+                                // Gestisci il caso in cui il valore non sia un numero intero valido
+                            }
+                        }
+                    }
+
+                    products.Add(prodID);
+
+                    Response.Cookies["ProductID"].Value = string.Join(",", products);
+                    Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(1);
+                }
+
+                //// Session
+                //int prodID = int.Parse(ProductID);
                 //List<int> products;
 
-                //if (Session["productid"] == null)
+                //if (Session["ProductID"] == null)
                 //{
                 //    products = new List<int>();
                 //}
                 //else
                 //{
-                //    products = (List<int>)Session["productid"];
+                //    products = (List<int>)Session["ProductID"];
                 //}
 
-                //products.Add(prodid);
+                //products.Add(prodID);
 
-                //Session["productid"] = products;
+                //Session["ProductID"] = products;
             }
             else if (Log.log == true)
             {
