@@ -462,5 +462,7 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
             // unico utente col carrello al momento. Ha id 6
             return 6;
         }
+
+
     }
 }
