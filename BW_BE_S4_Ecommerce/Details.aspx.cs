@@ -102,7 +102,6 @@ namespace BW_BE_S4_Ecommerce
                     txtQuantity.Enabled = false;
                     btnAddCart.Enabled = false;
 
-
                 }
 
             }
@@ -178,8 +177,6 @@ namespace BW_BE_S4_Ecommerce
                 }
             }
         }
-
-
 
         protected void btnEdit_Click(object sender, EventArgs e)
         {

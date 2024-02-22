@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace BW_BE_S4_Ecommerce
 {
@@ -22,6 +18,7 @@ namespace BW_BE_S4_Ecommerce
                 userCookie.Expires = DateTime.Now.AddDays(-21);
                 Response.Cookies.Add(userCookie);
             }
+            Log.log = false;
             Response.Redirect("Home.aspx");
         }
     }
