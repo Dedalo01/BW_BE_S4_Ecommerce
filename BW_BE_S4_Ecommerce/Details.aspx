@@ -11,5 +11,7 @@
         <asp:Button id="btnDelete" runat="server" Text="Cancella Prodotto" OnClick="btnDelete_Click" />
         <asp:Button id="btnEdit" runat="server" Text="Modifica Prodotto" OnClick="btnEdit_Click" />
 
+
+
     </div>
 </asp:Content>

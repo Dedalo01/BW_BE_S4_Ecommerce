@@ -48,6 +48,8 @@ namespace BW_BE_S4_Ecommerce
 
                         Response.Cookies.Add(userCookie);
 
+                        Log.log = true;
+
                         Response.Redirect("Home.aspx");
                     }
                     else

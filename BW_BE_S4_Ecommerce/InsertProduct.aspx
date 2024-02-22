@@ -10,4 +10,6 @@ IMMAGINEURL:<asp:TextBox ID="TxtImmagineUrl" runat="server"></asp:TextBox>
 
 
 <asp:Button ID="BtnCrea" runat="server" Text="Crea" OnClick="BtnCrea_Click"/>
+
+    <asp:Label ID="LblErrore" runat="server" Text=""></asp:Label>
 </asp:Content>
