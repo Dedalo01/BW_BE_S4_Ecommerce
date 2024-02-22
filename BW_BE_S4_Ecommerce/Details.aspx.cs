@@ -47,62 +47,65 @@ namespace BW_BE_S4_Ecommerce
         }
 
         protected void btnAddCart_Click(object sender, EventArgs e)
+{
+    if (Log.log == false)
+    {
+        // COOKIE
+
+        int prodID;
+        if (int.TryParse(ProductID, out prodID))
         {
+            // Ottieni la quantità selezionata dall'utente
+            int quantity = int.Parse(txtQuantity.Text);
 
-            if (Log.log == false)
+            // Cookie per gli ID dei prodotti
+            List<int> products;
+            List<string> productQuantities;
+
+            if (Request.Cookies["ProductID"] != null && !string.IsNullOrEmpty(Request.Cookies["ProductID"].Value))
             {
-                // COOKIE
+                string[] productIDs = Request.Cookies["ProductID"].Value.Split(',');
+                products = new List<int>(Array.ConvertAll(productIDs, int.Parse));
 
-                int prodID;
-                if (int.TryParse(ProductID, out prodID))
+                // Cookie per le quantità
+                string[] quantityValues = Request.Cookies["ProductQuantity"].Value.Split(',');
+                productQuantities = new List<string>(quantityValues);
+
+                // Controlla se l'ID del prodotto è già presente
+                int index = products.IndexOf(prodID);
+                if (index != -1)
                 {
-                    // Ottieni la quantità selezionata dall'utente
-                    int quantity = int.Parse(txtQuantity.Text);
-
-                    // Cookie per gli ID dei prodotti
-                    List<int> products;
-                    if (Request.Cookies["ProductID"] == null || string.IsNullOrEmpty(Request.Cookies["ProductID"].Value))
-                    {
-                        products = new List<int>();
-                    }
-                    else
-                    {
-                        string[] productIDs = Request.Cookies["ProductID"].Value.Split(',');
-                        products = new List<int>(Array.ConvertAll(productIDs, int.Parse));
-                    }
-
-                    products.Add(prodID);
-
-                    Response.Cookies["ProductID"].Value = string.Join(",", products);
-                    Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(1);
-
-                    // Cookie per le quantità
-
-                    if (int.TryParse(txtQuantity.Text, out quantity))
-                    {
-                        // Cookie per le quantità
-                        List<string> productQuantities;
-                        if (Request.Cookies["ProductQuantity"] == null || string.IsNullOrEmpty(Request.Cookies["ProductQuantity"].Value))
-                        {
-                            productQuantities = new List<string>();
-                        }
-                        else
-                        {
-                            string[] quantityValues = Request.Cookies["ProductQuantity"].Value.Split(',');
-                            productQuantities = new List<string>(quantityValues);
-                        }
-
-                        // Aggiungi la quantità solo se il parsing è riuscito
-                        productQuantities.Add(quantity.ToString());
-
-                        Response.Cookies["ProductQuantity"].Value = string.Join(",", productQuantities);
-                        Response.Cookies["ProductQuantity"].Expires = DateTime.Now.AddDays(1);
-                    }
-
-                    txtQuantity.Enabled = false;
-                    btnAddCart.Enabled = false;
-
+                    // Se presente, aggiorna la quantità
+                    int existingQuantity = int.Parse(productQuantities[index]);
+                    productQuantities[index] = (existingQuantity + quantity).ToString();
                 }
+                else
+                {
+                    // Se l'ID del prodotto non è già presente, aggiungilo
+                    products.Add(prodID);
+                    productQuantities.Add(quantity.ToString());
+                }
+            }
+            else
+            {
+                // Se non ci sono ID di prodotti nel cookie, aggiungili semplicemente
+                products = new List<int>();
+                products.Add(prodID);
+
+                productQuantities = new List<string>();
+                productQuantities.Add(quantity.ToString());
+            }
+
+            // Aggiorna i cookie
+            Response.Cookies["ProductID"].Value = string.Join(",", products);
+            Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(1);
+
+            Response.Cookies["ProductQuantity"].Value = string.Join(",", productQuantities);
+            Response.Cookies["ProductQuantity"].Expires = DateTime.Now.AddDays(1);
+
+            //txtQuantity.Enabled = false;
+            //btnAddCart.Enabled = false;
+        }
 
             }
             else if (Log.log == true)

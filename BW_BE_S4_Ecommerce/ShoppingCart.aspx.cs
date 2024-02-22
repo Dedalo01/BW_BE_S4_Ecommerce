@@ -244,15 +244,18 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
 
         protected void btnClearSession_Click(object sender, EventArgs e)
         {
+            if (Request.Cookies["ProductID"] != null && Request.Cookies["ProductQuantity"] != null)
+            {
+                Request.Cookies["ProductID"].Value = "";
+                Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(-1);
+                Request.Cookies["ProductQuantity"].Value = "";
+                Response.Cookies["ProductQuantity"].Expires = DateTime.Now.AddDays(-1);
 
-            Request.Cookies["ProductID"].Value = "";
-            Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(-1);
-            Request.Cookies["ProductQuantity"].Value = "";
-            Response.Cookies["ProductQuantity"].Expires = DateTime.Now.AddDays(-1);
 
+                ShoppingCartDataTable.CartTable.Clear();
+                RetrieveDataFromSession();
+            }
 
-            ShoppingCartDataTable.CartTable.Clear();
-            RetrieveDataFromSession();
         }
 
         private int GetCurrentUserId()
