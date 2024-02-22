@@ -15,10 +15,6 @@ namespace BW_BE_S4_Ecommerce
         DataTable dt;
         protected void Page_Load(object sender, EventArgs e)
         {
-
-
-
-
             if (!IsPostBack)
             {
 
@@ -35,13 +31,10 @@ namespace BW_BE_S4_Ecommerce
             }
         }
 
-
         protected void RetrieveDataFromSession()
         {
-
             HttpCookie cookie = Request.Cookies["ProductID"];
             HttpCookie cookieQuantity = Request.Cookies["ProductQuantity"];
-
 
             dt = new DataTable();
 
@@ -80,9 +73,7 @@ namespace BW_BE_S4_Ecommerce
                     }
                 }
 
-
             }
-
 
             ShoppingCartDataTable.CartTable = dt;
             rptCartItems.DataSource = ShoppingCartDataTable.CartTable;
@@ -99,17 +90,13 @@ namespace BW_BE_S4_Ecommerce
                 // Aumenta la quantità
                 int productId = int.Parse(e.CommandArgument.ToString());
                 TextBox quantityTextBox = (TextBox)e.Item.FindControl("quantityTextBox");
-                //HtmlGenericControl quantityLabel = (HtmlGenericControl)e.Item.FindControl("lblQuantita");
-                //Label quantityLabel = (Label)e.Item.FindControl("lblQuantita");
 
                 int quantity = int.Parse(quantityTextBox.Text);
-                //int quantity = int.Parse(quantityLabel.Text);
+
                 quantity++;
                 quantityTextBox.Text = quantity.ToString();
-                //quantityLabel.Text = quantity.ToString();
 
                 UpdateQuantityInDataTable(productId, quantity);
-
                 TotalCartPrice(ShoppingCartDataTable.CartTable);
             }
             else if (e.CommandName == "Decrease")
@@ -117,17 +104,13 @@ namespace BW_BE_S4_Ecommerce
                 // Diminuisci la quantità
                 int productId = int.Parse(e.CommandArgument.ToString());
                 TextBox quantityTextBox = (TextBox)e.Item.FindControl("quantityTextBox");
-                //Label quantityLabel = (Label)e.Item.FindControl("lblQuantita");
-                // HtmlGenericControl quantityLabel = (HtmlGenericControl)e.Item.FindControl("lblQuantita");
-                //Label quantityLabel = (Label)e.Item.FindControl("lblQuantita");
+
                 int quantity = int.Parse(quantityTextBox.Text);
-                //int quantity = int.Parse(quantityLabel.Text);
-                //quantityLabel.Text = quantity.ToString();
+
                 if (quantity > 0)
                 {
                     quantity--;
                     quantityTextBox.Text = quantity.ToString();
-                    //quantityLabel.Text = quantity.ToString();
 
                     UpdateQuantityInDataTable(productId, quantity);
                     TotalCartPrice(ShoppingCartDataTable.CartTable);
@@ -136,7 +119,6 @@ namespace BW_BE_S4_Ecommerce
 
             }
             else if (e.CommandName == "Delete")
-
 
             {
                 int productId = Convert.ToInt32(e.CommandArgument);
@@ -158,84 +140,6 @@ namespace BW_BE_S4_Ecommerce
                 }
             }
         }
-
-
-
-        //protected void rptCartItems_ItemCommand(object source, RepeaterCommandEventArgs e)
-        //{
-        //    if (e.CommandName == "Increase")
-        //    {
-        //        // Aumenta la quantità
-        //        int productId = int.Parse(e.CommandArgument.ToString());
-        //        Label quantityLabel = (Label)e.Item.FindControl("lblQuantita");
-        //        Response.Write(quantityLabel.Text);
-        //        int quantity;
-        //        if (int.TryParse(quantityLabel.Text, out quantity))
-        //        {
-        //            quantity++;
-        //            quantityLabel.Text = quantity.ToString();
-
-        //            UpdateQuantityInDataTable(productId, quantity);
-        //            TotalCartPrice(ShoppingCartDataTable.CartTable);
-        //        }
-        //        else
-        //        {
-        //            // Gestisci il caso in cui la conversione non riesce
-        //            // Puoi impostare un valore predefinito o gestire l'errore in altro modo
-        //            quantityLabel.Text = "T'OH BECCHI AR CULO";
-        //        }
-        //    }
-        //    else if (e.CommandName == "Decrease")
-        //    {
-        //        // Diminuisci la quantità
-        //        int productId = int.Parse(e.CommandArgument.ToString());
-        //        Label quantityLabel = (Label)e.Item.FindControl("lblQuantita");
-
-        //        int quantity;
-        //        if (int.TryParse(quantityLabel.Text, out quantity) && quantity > 0)
-        //        {
-        //            quantity--;
-        //            quantityLabel.Text = quantity.ToString();
-
-        //            UpdateQuantityInDataTable(productId, quantity);
-        //            TotalCartPrice(ShoppingCartDataTable.CartTable);
-        //        }
-        //        else
-        //        {
-        //            // Gestisci il caso in cui la conversione non riesce o la quantità è già 0
-        //            // Puoi impostare un valore predefinito o gestire l'errore in altro modo
-        //            quantityLabel.Text = "T'OH BECCHI AR CULO IN REVERSE";
-        //        }
-        //    }
-        //    else if (e.CommandName == "Delete")
-
-
-        //    {
-        //        int productId = Convert.ToInt32(e.CommandArgument);
-        //        HttpCookie cookie = Request.Cookies["ProductID"];
-
-        //        if (cookie != null && !string.IsNullOrEmpty(cookie.Value))
-        //        {
-        //            List<int> productIds = cookie.Value.Split(',').Select(id => Convert.ToInt32(id)).ToList();
-
-        //            if (productIds.Contains(productId))
-        //            {
-        //                productIds.Remove(productId);
-
-        //                cookie.Value = string.Join(",", productIds);
-        //                Response.Cookies.Add(cookie);
-
-        //                RetrieveDataFromSession();
-        //            }
-        //        }
-        //    }
-        //    // Resto del codice...
-        //}
-
-
-
-
-
 
         private void BindCartRepeater()
         {
@@ -341,11 +245,13 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
         protected void btnClearSession_Click(object sender, EventArgs e)
         {
 
-            Response.Cookies["ProductID"].Value = "";
+            Request.Cookies["ProductID"].Value = "";
             Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(-1);
-            Response.Cookies["ProductQuantity"].Value = "";
+            Request.Cookies["ProductQuantity"].Value = "";
             Response.Cookies["ProductQuantity"].Expires = DateTime.Now.AddDays(-1);
 
+
+            ShoppingCartDataTable.CartTable.Clear();
             RetrieveDataFromSession();
         }
 
@@ -355,6 +261,11 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
             return 6;
         }
 
+        /// <summary>
+        /// Questa Funzione calcola il totale del carrello.
+        /// 
+        /// </summary>
+        /// <param name="ShoppingListTable"></param>
         private void TotalCartPrice(DataTable ShoppingListTable)
         {
             double totalPrice = 0;
