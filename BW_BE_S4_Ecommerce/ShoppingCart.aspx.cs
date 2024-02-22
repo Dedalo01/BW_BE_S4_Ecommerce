@@ -221,11 +221,7 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
             return 6;
         }
 
-        /// <summary>
-        /// Questa Funzione calcola il totale del carrello.
-        /// 
-        /// </summary>
-        /// <param name="ShoppingListTable"></param>
+   
         private void TotalCartPrice(DataTable ShoppingListTable)
         {
             double totalPrice = 0;
