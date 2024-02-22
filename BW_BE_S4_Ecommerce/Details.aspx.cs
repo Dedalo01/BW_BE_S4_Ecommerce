@@ -121,27 +121,7 @@ namespace BW_BE_S4_Ecommerce
                     }
                 }
             
-        
 
-
-
-
-        //// Session
-        //int prodID = int.Parse(ProductID);
-        //List<int> products;
-
-        //if (Session["ProductID"] == null)
-        //{
-        //    products = new List<int>();
-        //}
-        //else
-        //{
-        //    products = (List<int>)Session["ProductID"];
-        //}
-
-        //products.Add(prodID);
-
-        //Session["ProductID"] = products;
     }
             else if (Log.log == true)
             {
