@@ -13,5 +13,16 @@ namespace BW_BE_S4_Ecommerce
         {
 
         }
+
+        public void BtnLogout_Click(object sender, EventArgs e)
+        {
+            if (Request.Cookies["UserDetails"] != null)
+            {
+                HttpCookie userCookie = Request.Cookies["UserDetails"];
+                userCookie.Expires = DateTime.Now.AddDays(-21);
+                Response.Cookies.Add(userCookie);
+            }
+            Response.Redirect("Home.aspx");
+        }
     }
 }
