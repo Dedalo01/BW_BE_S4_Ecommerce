@@ -18,16 +18,16 @@ namespace BW_BE_S4_Ecommerce
             if (!IsPostBack)
             {
 
-                if (Log.log == false)
-                {
-                    RetrieveDataFromSession();
+                //if (Log.log == false)
+                //{
 
-                }
-                else if (Log.log == true)
-                {
-                    BindCartRepeater();
-                }
+                //}
+                //else if (Log.log == true)
+                //{
+                //    //BindCartRepeater();
+                //}
 
+                RetrieveDataFromSession();
             }
         }
 
@@ -79,6 +79,79 @@ namespace BW_BE_S4_Ecommerce
             rptCartItems.DataSource = ShoppingCartDataTable.CartTable;
             rptCartItems.DataBind();
             TotalCartPrice(ShoppingCartDataTable.CartTable);
+
+            // salvo nel db se loggato
+            if (Request.Cookies["UserDetails"] != null)
+            {
+                // Ottieni il valore del cookie
+                HttpCookie userCookie = Request.Cookies["UserDetails"];
+
+                // Controlla se ci sono i valori di userId ed email nel cookie
+                if (userCookie["UserId"] != null)
+                {
+                    string userId = userCookie["UserId"];
+                    //string userId = "15";
+
+
+
+                    string findCartQuery = @"SELECT c.Id FROM Carrello c
+                                            JOIN Utente u ON c.UtenteId = u.Id
+                                            WHERE u.Id = @userId";
+
+                    try
+                    {
+                        Db.conn.Open();
+
+                        SqlCommand cmd = new SqlCommand(findCartQuery, Db.conn);
+                        cmd.Parameters.AddWithValue("userId", userId);
+                        object cartIdObj = cmd.ExecuteScalar();
+                        string cartId = Convert.ToString(cartIdObj);
+                        string addCartToDbQuery = "INSERT INTO ProdottoInCarrello (CarrelloId, ProdottoId, Quantita) VALUES (@carId, @prodId, @qt)";
+                        Response.Write(cartId + "<- ID DEL CARRELLO");
+
+                        string checkIdAlreadyInDbQuery = "SELECT ProdottoId FROM ProdottoInCarrello WHERE ProdottoId = @idToCheck";
+                        foreach (DataRow row in ShoppingCartDataTable.CartTable.Rows)
+                        {
+                            SqlCommand checkIdInDb = new SqlCommand(checkIdAlreadyInDbQuery, Db.conn);
+                            checkIdInDb.Parameters.AddWithValue("idToCheck", row["ID"].ToString());
+                            //??
+                            object result = checkIdInDb.ExecuteScalar();
+
+                            if (result == null)
+                            {
+
+                                SqlCommand insertRowInDb = new SqlCommand(addCartToDbQuery, Db.conn);
+                                insertRowInDb.Parameters.AddWithValue("carId", cartId);
+                                insertRowInDb.Parameters.AddWithValue("prodId", row["ID"].ToString());
+                                insertRowInDb.Parameters.AddWithValue("qt", row["Quantita"].ToString());
+
+                                insertRowInDb.ExecuteNonQuery();
+                            }
+                            else
+                            {
+                                string updateQuery = @"UPDATE ProdottoInCarrello
+                                                        SET Quantita = @quantita
+                                                        WHERE CarrelloId = @cartId";
+
+                                SqlCommand updateCmd = new SqlCommand(updateQuery, Db.conn);
+                                updateCmd.Parameters.AddWithValue("quantita", row["Quantita"].ToString());
+                                updateCmd.Parameters.AddWithValue("cartId", cartId);
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Response.Write(ex.Message);
+                    }
+                    finally
+                    {
+                        Db.conn.Close();
+
+                    }
+
+                }
+            }
         }
 
 
@@ -133,7 +206,7 @@ namespace BW_BE_S4_Ecommerce
                     {
                         int index = productIds.IndexOf(productId);
                         productIds.RemoveAt(index);
-                        productQuantities.RemoveAt(index); 
+                        productQuantities.RemoveAt(index);
 
                         cookieId.Value = string.Join(",", productIds);
                         cookieQuantity.Value = string.Join(",", productQuantities);
