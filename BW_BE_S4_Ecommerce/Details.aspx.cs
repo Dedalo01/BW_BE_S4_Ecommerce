@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 
 
 namespace BW_BE_S4_Ecommerce
@@ -9,7 +8,7 @@ namespace BW_BE_S4_Ecommerce
     public partial class Details : System.Web.UI.Page
     {
         private string ProductID;
-        
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Request.QueryString["product"] == null)
@@ -100,23 +99,11 @@ namespace BW_BE_S4_Ecommerce
                         Response.Cookies["ProductQuantity"].Expires = DateTime.Now.AddDays(1);
                     }
 
+                    txtQuantity.Enabled = false;
+                    btnAddCart.Enabled = false;
+
                 }
-                //// Session
-                //int prodID = int.Parse(ProductID);
-                //List<int> products;
 
-                //if (Session["ProductID"] == null)
-                //{
-                //    products = new List<int>();
-                //}
-                //else
-                //{
-                //    products = (List<int>)Session["ProductID"];
-                //}
-
-                //products.Add(prodID);
-
-                //Session["ProductID"] = products;
             }
             else if (Log.log == true)
             {
@@ -152,7 +139,7 @@ namespace BW_BE_S4_Ecommerce
                     Db.conn.Close();
                 }
             }
-            
+
         }
         protected void btnDelete_Click(object sender, EventArgs e)
         {
@@ -171,7 +158,7 @@ namespace BW_BE_S4_Ecommerce
                 if (rowsAffected > 0)
                 {
                     Response.Write("Prodotto eliminato con successo");
-                  
+
                 }
                 else
                 {
@@ -190,8 +177,6 @@ namespace BW_BE_S4_Ecommerce
                 }
             }
         }
-
-
 
         protected void btnEdit_Click(object sender, EventArgs e)
         {
