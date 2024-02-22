@@ -117,8 +117,14 @@ namespace BW_BE_S4_Ecommerce
                 int quantity = int.Parse(quantityTextBox.Text);
                 quantity++;
                 quantityTextBox.Text = quantity.ToString();
-                TotalCartPrice(ShoppingCartDataTable.CartTable, quantityTextBox.Text, productId);
+                // TotalCartPrice(ShoppingCartDataTable.CartTable, quantityTextBox.Text, productId);
 
+                foreach (DataRow row in ShoppingCartDataTable.CartTable.Rows)
+                {
+
+                }
+
+                TotalCartPrice(ShoppingCartDataTable.CartTable);
             }
             else if (e.CommandName == "Decrease")
             {
