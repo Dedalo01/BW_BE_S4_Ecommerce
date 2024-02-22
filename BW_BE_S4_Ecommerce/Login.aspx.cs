@@ -30,13 +30,24 @@ namespace BW_BE_S4_Ecommerce
                     cmd.Parameters.AddWithValue("@username", username);
                     cmd.Parameters.AddWithValue("@password", password);
 
+
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
                     {
                         int userId = (int)reader["Id"];
                         string userEmail = reader["Email"].ToString();
-
                         reader.Close();
+
+
+                        string insertCarrelloQuery = "IF NOT EXISTS (SELECT 1 FROM Carrello WHERE UtenteId = @UtenteId) " +
+                              "INSERT INTO Carrello (UtenteId) VALUES (@UtenteId)";
+
+                        using (SqlCommand cmdcarrello = new SqlCommand(insertCarrelloQuery, Db.conn))
+                        {
+                            cmdcarrello.Parameters.AddWithValue("@UtenteId", userId);
+                            cmdcarrello.ExecuteNonQuery();
+                        }
+
 
                         Db.conn.Close();
 
@@ -44,7 +55,7 @@ namespace BW_BE_S4_Ecommerce
                         userCookie["UserId"] = userId.ToString();
                         userCookie["UserEmail"] = userEmail;
 
-                        userCookie.Expires = DateTime.Now.AddDays(1); 
+                        userCookie.Expires = DateTime.Now.AddDays(1);
 
                         Response.Cookies.Add(userCookie);
 
@@ -68,15 +79,6 @@ namespace BW_BE_S4_Ecommerce
             }
         }
 
-        protected void btnLogout_Click(object sender, EventArgs e)
-        {
-            if (Request.Cookies["UserDetails"] != null)
-            {
-                HttpCookie userCookie = Request.Cookies["UserDetails"];
-                userCookie.Expires = DateTime.Now.AddDays(-21);
-                Response.Cookies.Add(userCookie);
-            }
-            Response.Redirect("Login.aspx");
-        }
+
     }
 }
