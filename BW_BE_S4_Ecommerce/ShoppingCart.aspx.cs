@@ -36,8 +36,7 @@ namespace BW_BE_S4_Ecommerce
             HttpCookie cookie = Request.Cookies["ProductID"];
             HttpCookie cookieQuantity = Request.Cookies["ProductQuantity"];
 
-            dt = new DataTable();
-
+            DataTable dt = new DataTable();
             dt.Columns.Add("ID", typeof(int));
             dt.Columns.Add("Nome", typeof(string));
             dt.Columns.Add("Prezzo", typeof(double));
@@ -48,97 +47,58 @@ namespace BW_BE_S4_Ecommerce
                 string[] productIds = cookie.Value.Split(',');
                 string[] quantities = cookieQuantity.Value.Split(',');
 
+                Dictionary<int, int> productQuantities = new Dictionary<int, int>();
+
                 for (int i = 0; i < productIds.Length; i++)
                 {
                     if (int.TryParse(productIds[i], out int id) && int.TryParse(quantities[i], out int quantity))
                     {
-                        try
+                        if (productQuantities.ContainsKey(id))
                         {
-                            Db.conn.Open();
-                            SqlCommand cmd = new SqlCommand($"SELECT * FROM Prodotto WHERE ID=@Id", Db.conn);
-                            cmd.Parameters.AddWithValue("@Id", id);
-                            SqlDataReader dataReader = cmd.ExecuteReader();
-
-                            if (dataReader.HasRows)
-                            {
-                                dataReader.Read();
-                                dt.Rows.Add(dataReader["ID"], dataReader["Nome"], dataReader["Prezzo"], quantity);
-                            }
-                            dataReader.Close();
+                            // Se l'ID del prodotto esiste già nel dizionario, aggiungi la quantità
+                            productQuantities[id] += quantity;
                         }
-                        finally
+                        else
                         {
-                            Db.conn.Close();
+                            // Altrimenti, aggiungi l'ID del prodotto al dizionario
+                            productQuantities.Add(id, quantity);
                         }
                     }
                 }
 
+                // Ora hai un dizionario con ID prodotto come chiavi e quantità sommate come valori
+                // Ora puoi utilizzare questo dizionario per recuperare i dettagli dei prodotti e aggiungerli alla tabella
+
+                foreach (var kvp in productQuantities)
+                {
+                    int id = kvp.Key;
+                    int quantity = kvp.Value;
+
+                    try
+                    {
+                        Db.conn.Open();
+                        SqlCommand cmd = new SqlCommand($"SELECT * FROM Prodotto WHERE ID=@Id", Db.conn);
+                        cmd.Parameters.AddWithValue("@Id", id);
+                        SqlDataReader dataReader = cmd.ExecuteReader();
+
+                        if (dataReader.HasRows)
+                        {
+                            dataReader.Read();
+                            dt.Rows.Add(dataReader["ID"], dataReader["Nome"], dataReader["Prezzo"], quantity);
+                        }
+                        dataReader.Close();
+                    }
+                    finally
+                    {
+                        Db.conn.Close();
+                    }
+                }
             }
 
             ShoppingCartDataTable.CartTable = dt;
             rptCartItems.DataSource = ShoppingCartDataTable.CartTable;
             rptCartItems.DataBind();
             TotalCartPrice(ShoppingCartDataTable.CartTable);
-        }
-
-
-
-        protected void rptCartItems_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName == "Increase")
-            {
-                // Aumenta la quantità
-                int productId = int.Parse(e.CommandArgument.ToString());
-                TextBox quantityTextBox = (TextBox)e.Item.FindControl("quantityTextBox");
-
-                int quantity = int.Parse(quantityTextBox.Text);
-
-                quantity++;
-                quantityTextBox.Text = quantity.ToString();
-
-                UpdateQuantityInDataTable(productId, quantity);
-                TotalCartPrice(ShoppingCartDataTable.CartTable);
-            }
-            else if (e.CommandName == "Decrease")
-            {
-                // Diminuisci la quantità
-                int productId = int.Parse(e.CommandArgument.ToString());
-                TextBox quantityTextBox = (TextBox)e.Item.FindControl("quantityTextBox");
-
-                int quantity = int.Parse(quantityTextBox.Text);
-
-                if (quantity > 0)
-                {
-                    quantity--;
-                    quantityTextBox.Text = quantity.ToString();
-
-                    UpdateQuantityInDataTable(productId, quantity);
-                    TotalCartPrice(ShoppingCartDataTable.CartTable);
-
-                }
-
-            }
-            else if (e.CommandName == "Delete")
-
-            {
-                int productId = Convert.ToInt32(e.CommandArgument);
-                HttpCookie cookie = Request.Cookies["ProductID"];
-
-                if (cookie != null && !string.IsNullOrEmpty(cookie.Value))
-                {
-                    List<int> productIds = cookie.Value.Split(',').Select(id => Convert.ToInt32(id)).ToList();
-
-                    if (productIds.Contains(productId))
-                    {
-                        productIds.Remove(productId);
-
-                        cookie.Value = string.Join(",", productIds);
-                        Response.Cookies.Add(cookie);
-
-                        RetrieveDataFromSession();
-                    }
-                }
-            }
         }
 
         private void BindCartRepeater()

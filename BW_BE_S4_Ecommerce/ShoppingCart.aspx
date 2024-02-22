@@ -30,7 +30,8 @@
             </asp:Repeater>
 
  <ul id="htmlContent" runat="server" class="m-auto w-50">
-    <asp:Repeater ID="rptCartItems" runat="server" OnItemCommand="rptCartItems_ItemCommand">
+    <asp:Repeater ID="rptCartItems" runat="server" OnItemCommand="rptCartItems_ItemCommand1">
+
         <ItemTemplate>
             <li class="d-flex justify-content-between">
                 <p class="whiteTest"><%# Eval("Nome") %></p>
