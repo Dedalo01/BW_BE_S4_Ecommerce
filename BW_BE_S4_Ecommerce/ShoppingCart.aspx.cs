@@ -106,7 +106,7 @@ namespace BW_BE_S4_Ecommerce
                         cmd.Parameters.AddWithValue("userId", userId);
                         object cartIdObj = cmd.ExecuteScalar();
                         string cartId = Convert.ToString(cartIdObj);
-                        string addCartToDbQuery = "INSERT INTO ProdottoInCarrello (CarrelloId, ProdottoId, Quantita) VALUES (@carId, @prodId, @qt)";
+                        string addCartToDbQuery = "INSERT INTO ProdottoInCarrello (CarrelloId, ProdottoId, Quantita) VALUES (@cartId, @prodId, @qt)";
                         Response.Write(cartId + "<- ID DEL CARRELLO");
 
                         string checkIdAlreadyInDbQuery = "SELECT ProdottoId FROM ProdottoInCarrello WHERE ProdottoId = @idToCheck";
@@ -121,7 +121,7 @@ namespace BW_BE_S4_Ecommerce
                             {
 
                                 SqlCommand insertRowInDb = new SqlCommand(addCartToDbQuery, Db.conn);
-                                insertRowInDb.Parameters.AddWithValue("carId", cartId);
+                                insertRowInDb.Parameters.AddWithValue("cartId", cartId);
                                 insertRowInDb.Parameters.AddWithValue("prodId", row["ID"].ToString());
                                 insertRowInDb.Parameters.AddWithValue("qt", row["Quantita"].ToString());
 
@@ -136,6 +136,8 @@ namespace BW_BE_S4_Ecommerce
                                 SqlCommand updateCmd = new SqlCommand(updateQuery, Db.conn);
                                 updateCmd.Parameters.AddWithValue("quantita", row["Quantita"].ToString());
                                 updateCmd.Parameters.AddWithValue("cartId", cartId);
+
+                                updateCmd.ExecuteNonQuery();
                             }
                         }
 
