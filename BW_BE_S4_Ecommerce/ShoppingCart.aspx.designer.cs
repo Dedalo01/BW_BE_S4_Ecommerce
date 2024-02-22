@@ -24,15 +24,6 @@ namespace BW_BE_S4_Ecommerce
         protected global::System.Web.UI.WebControls.Repeater CartRepeater;
 
         /// <summary>
-        /// Controllo contentTot.
-        /// </summary>
-        /// <remarks>
-        /// Campo generato automaticamente.
-        /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl contentTot;
-
-        /// <summary>
         /// Controllo htmlContent.
         /// </summary>
         /// <remarks>
@@ -51,30 +42,21 @@ namespace BW_BE_S4_Ecommerce
         protected global::System.Web.UI.WebControls.Repeater rptCartItems;
 
         /// <summary>
-        /// Controllo btnClearSession.
+        /// Controllo Button1.
         /// </summary>
         /// <remarks>
         /// Campo generato automaticamente.
         /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnClearSession;
+        protected global::System.Web.UI.WebControls.Button Button1;
 
         /// <summary>
-        /// Controllo DebugLabel.
+        /// Controllo LblPrezzo.
         /// </summary>
         /// <remarks>
         /// Campo generato automaticamente.
         /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label DebugLabel;
-
-        /// <summary>
-        /// Controllo LblProdotto.
-        /// </summary>
-        /// <remarks>
-        /// Campo generato automaticamente.
-        /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LblProdotto;
+        protected global::System.Web.UI.WebControls.Label LblPrezzo;
     }
 }

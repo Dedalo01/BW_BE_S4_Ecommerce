@@ -14,8 +14,13 @@ namespace BW_BE_S4_Ecommerce
         List<int> products;
         protected void Page_Load(object sender, EventArgs e)
         {
+            
+                
+            
+
             if (!IsPostBack)
             {
+
                 if (Log.log == false)
                 {
                     RetrieveDataFromSession();
@@ -36,48 +41,46 @@ namespace BW_BE_S4_Ecommerce
         {
 
             HttpCookie cookie = Request.Cookies["ProductID"];
+            HttpCookie cookieQuantity = Request.Cookies["ProductQuantity"];
 
             DataTable dt = new DataTable();
             dt.Columns.Add("ID", typeof(int));
             dt.Columns.Add("Nome", typeof(string));
             dt.Columns.Add("Prezzo", typeof(double));
+            dt.Columns.Add("Quantita", typeof(int));
 
-            if (cookie != null && !string.IsNullOrEmpty(cookie.Value))
+            if (cookie != null && !string.IsNullOrEmpty(cookie.Value) && cookieQuantity != null && !string.IsNullOrEmpty(cookieQuantity.Value))
             {
                 string[] productIds = cookie.Value.Split(',');
+                string[] quantities = cookieQuantity.Value.Split(',');
 
-                foreach (string idString in productIds)
+                for (int i = 0; i < productIds.Length; i++)
                 {
-                    if (int.TryParse(idString, out int id))
+                    if (int.TryParse(productIds[i], out int id) && int.TryParse(quantities[i], out int quantity))
                     {
                         try
                         {
-                            
-                            
-                                Db.conn.Open();
-                                SqlCommand cmd = new SqlCommand($"SELECT * FROM Prodotto WHERE ID='{id}'", Db.conn);
-                                SqlDataReader dataReader = cmd.ExecuteReader();
-                                if (dataReader.HasRows)
-                                {
-                                    dataReader.Read();
-                                    dt.Rows.Add(dataReader["ID"], dataReader["Nome"], dataReader["Prezzo"]);
-                                }
-                            
-                        }
-                        catch (Exception ex)
-                        {
-                            Response.Write(ex.ToString());
+                            Db.conn.Open();
+                            SqlCommand cmd = new SqlCommand($"SELECT * FROM Prodotto WHERE ID=@Id", Db.conn);
+                            cmd.Parameters.AddWithValue("@Id", id);
+                            SqlDataReader dataReader = cmd.ExecuteReader();
+
+                            if (dataReader.HasRows)
+                            {
+                                dataReader.Read();
+                                dt.Rows.Add(dataReader["ID"], dataReader["Nome"], dataReader["Prezzo"], quantity);
+                            }
+                            dataReader.Close();
                         }
                         finally
                         {
-                            if (Db.conn.State == ConnectionState.Open)
-                          {
-                          Db.conn.Close();
-                        }
+                            Db.conn.Close();
                         }
                     }
                 }
             }
+
+
 
             rptCartItems.DataSource = dt;
             rptCartItems.DataBind();
@@ -267,12 +270,36 @@ namespace BW_BE_S4_Ecommerce
         //    }
         //}
 
-        protected void rptCartItems_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName == "Delete")
+       
+            protected void rptCartItems_ItemCommand(object source, RepeaterCommandEventArgs e)
             {
-                int productId = Convert.ToInt32(e.CommandArgument);
-                HttpCookie cookie = Request.Cookies["ProductID"];
+                if (e.CommandName == "Increase")
+                {
+                    // Aumenta la quantità
+                    int productId = int.Parse(e.CommandArgument.ToString());
+                    TextBox quantityTextBox = (TextBox)e.Item.FindControl("quantityTextBox");
+                    int quantity = int.Parse(quantityTextBox.Text);
+                    quantity++;
+                    quantityTextBox.Text = quantity.ToString();
+                }
+                else if (e.CommandName == "Decrease")
+                {
+                    // Diminuisci la quantità
+                    int productId = int.Parse(e.CommandArgument.ToString());
+                    TextBox quantityTextBox = (TextBox)e.Item.FindControl("quantityTextBox");
+                    int quantity = int.Parse(quantityTextBox.Text);
+                    if (quantity > 1)
+                    {
+                        quantity--;
+                        quantityTextBox.Text = quantity.ToString();
+                    }
+                }
+                else if (e.CommandName == "Delete")
+
+                    
+                {
+                    int productId = Convert.ToInt32(e.CommandArgument);
+                    HttpCookie cookie = Request.Cookies["ProductID"];
 
                 if (cookie != null && !string.IsNullOrEmpty(cookie.Value))
                 {
@@ -291,7 +318,7 @@ namespace BW_BE_S4_Ecommerce
             }
         }
 
-
+       
         //protected void rptCartItems_ItemCommand(object source, RepeaterCommandEventArgs e)
         //{
         //    if (e.CommandName == "Delete")
@@ -382,13 +409,53 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
 
         }
 
+        protected void rptCartItems_ItemCommand1(object source, RepeaterCommandEventArgs e)
+{
+    if (e.CommandName == "AddToCart")
+    {
+        int prodID;
+        if (int.TryParse(e.CommandArgument.ToString(), out prodID))
+        {
+           
+
+            List<int> products;
+            if (Request.Cookies["ProductID"] == null || string.IsNullOrEmpty(Request.Cookies["ProductID"].Value))
+            {
+                products = new List<int>();
+            }
+            else
+            {
+                string[] productIDs = Request.Cookies["ProductID"].Value.Split(',');
+                products = new List<int>(Array.ConvertAll(productIDs, int.Parse));
+            }
+
+            Response.Cookies["ProductID"].Value = string.Join(",", products);
+            Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(1);
+        }
+    }
+}
+
+
         protected void btnClearSession_Click(object sender, EventArgs e)
         {
-
-            Session.Clear();
+            
+            Response.Cookies["ProductID"].Value = "";
+            Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(-1);
+            Response.Cookies["ProductQuantity"].Value = "";
+            Response.Cookies["ProductQuantity"].Expires = DateTime.Now.AddDays(-1);
 
             RetrieveDataFromSession();
         }
+
+
+
+        //protected void btnClearSession_Click(object sender, EventArgs e)
+        //{
+
+        //    Session.Clear();
+
+        //    RetrieveDataFromSession();
+        //}
 
         private int GetCurrentUserId()
         {

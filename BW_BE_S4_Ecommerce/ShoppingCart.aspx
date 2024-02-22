@@ -29,32 +29,35 @@
                 </ItemTemplate>
             </asp:Repeater>
 
- <div id="contentTot" runat="server" class="my-3 mx-4"></div>
  <ul id="htmlContent" runat="server" class="m-auto w-50">
-     <asp:Repeater ID="rptCartItems" runat="server" OnItemCommand="rptCartItems_ItemCommand">
-         <ItemTemplate>
-             <li class="d-flex justify-content-between">
-                 <p class="whiteTest" ><%# Eval("Nome") %></p>
-                 <div class="d-flex mb-2 align-items-baseline">
-                     <p class="d-flex me-1 whiteTest"><%# Eval("Prezzo") %>€</p>
-                     <asp:Button runat="server" CommandName="Delete" CommandArgument='<%# Eval("ID") %>'
-                         CssClass="btn btn-danger w-75 " Text="🗑" OnClientClick="return confirm('Sei sicuro di voler eliminare questo elemento?');" />
-                 </div>
-             </li>
-         </ItemTemplate>
-     </asp:Repeater>
- </ul>
- 
- <div class="bottoneDelete">
-     <asp:Button runat="server" ID="btnClearSession" CssClass="btn btn-danger" Text="Svuota Carrello" OnClick="btnClearSession_Click" />
- </div>
+    <asp:Repeater ID="rptCartItems" runat="server" OnItemCommand="rptCartItems_ItemCommand">
+        <ItemTemplate>
+            <li class="d-flex justify-content-between">
+                <p class="whiteTest"><%# Eval("Nome") %></p>
+                <div class="d-flex mb-2 align-items-baseline">
+                    <p class="d-flex me-1 whiteTest"><%# Eval("Prezzo") %>€</p>
+                    <asp:TextBox runat="server" ID="quantityTextBox" CssClass="d-flex me-1 whiteTest" Text='<%# Eval("Quantita") %>' type="number" min="0"></asp:TextBox>
+                    <asp:Button runat="server" CommandName="Increase" CommandArgument='<%# Eval("ID") %>'
+                        CssClass="btn btn-primary w-25" Text="+" />
+                    <asp:Button runat="server" CommandName="Decrease" CommandArgument='<%# Eval("ID") %>'
+                        CssClass="btn btn-primary w-25" Text="-" />
+                    <asp:Button runat="server" CommandName="Delete" CommandArgument='<%# Eval("ID") %>'
+                        CssClass="btn btn-danger w-25" Text="🗑" OnClientClick="return confirm('Sei sicuro di voler eliminare questo elemento?');" />
+                </div>
+            </li>
+        </ItemTemplate>
+    </asp:Repeater>
+</ul>
+
+
+  
 
 
 
 
 
-            <asp:Label ID="DebugLabel" runat="server" Text=""></asp:Label>
-            <asp:Label ID="LblProdotto" runat="server" Text=""></asp:Label>
+            <asp:Button ID="Button1" runat="server" Text="Button" CssClass="btn btn-danger" OnClick="btnClearSession_Click"/>
+            <asp:Label ID="LblPrezzo" runat="server" Text=""></asp:Label>
           
         </div>
 

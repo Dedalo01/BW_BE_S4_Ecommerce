@@ -57,8 +57,11 @@ namespace BW_BE_S4_Ecommerce
                 int prodID;
                 if (int.TryParse(ProductID, out prodID))
                 {
-                    List<int> products;
+                    // Ottieni la quantità selezionata dall'utente
+                    int quantity = int.Parse(txtQuantity.Text);
 
+                    // Cookie per gli ID dei prodotti
+                    List<int> products;
                     if (Request.Cookies["ProductID"] == null || string.IsNullOrEmpty(Request.Cookies["ProductID"].Value))
                     {
                         products = new List<int>();
@@ -66,28 +69,38 @@ namespace BW_BE_S4_Ecommerce
                     else
                     {
                         string[] productIDs = Request.Cookies["ProductID"].Value.Split(',');
-                        products = new List<int>();
-
-                        foreach (string id in productIDs)
-                        {
-                            int parsedID;
-                            if (int.TryParse(id, out parsedID))
-                            {
-                                products.Add(parsedID);
-                            }
-                            else
-                            {
-                                // Gestisci il caso in cui il valore non sia un numero intero valido
-                            }
-                        }
+                        products = new List<int>(Array.ConvertAll(productIDs, int.Parse));
                     }
 
                     products.Add(prodID);
 
                     Response.Cookies["ProductID"].Value = string.Join(",", products);
                     Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(1);
-                }
 
+                    // Cookie per le quantità
+
+                    if (int.TryParse(txtQuantity.Text, out quantity))
+                    {
+                        // Cookie per le quantità
+                        List<string> productQuantities;
+                        if (Request.Cookies["ProductQuantity"] == null || string.IsNullOrEmpty(Request.Cookies["ProductQuantity"].Value))
+                        {
+                            productQuantities = new List<string>();
+                        }
+                        else
+                        {
+                            string[] quantityValues = Request.Cookies["ProductQuantity"].Value.Split(',');
+                            productQuantities = new List<string>(quantityValues);
+                        }
+
+                        // Aggiungi la quantità solo se il parsing è riuscito
+                        productQuantities.Add(quantity.ToString());
+
+                        Response.Cookies["ProductQuantity"].Value = string.Join(",", productQuantities);
+                        Response.Cookies["ProductQuantity"].Expires = DateTime.Now.AddDays(1);
+                    }
+
+                }
                 //// Session
                 //int prodID = int.Parse(ProductID);
                 //List<int> products;
