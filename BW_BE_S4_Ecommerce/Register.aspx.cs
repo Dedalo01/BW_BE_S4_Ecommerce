@@ -32,7 +32,7 @@ namespace BW_BE_S4_Ecommerce
             {
                 Db.conn.Open();
 
-                if (nome.Length > 2 || cognome.Length > 2 || username.Length > 2)
+                if (nome.Length > 2 && cognome.Length > 2 && username.Length > 2)
                 {
                     if(IsValidEmail(email))
                     {
@@ -83,13 +83,77 @@ namespace BW_BE_S4_Ecommerce
                     cmd.Parameters.AddWithValue("@Username", username);
 
                     cmd.ExecuteNonQuery();
+
                 }
+
+
+                string query = "SELECT Id FROM Utente WHERE Nome = @Nome";
+
+                using (SqlCommand command = new SqlCommand(query, Db.conn))
+                {
+                    command.Parameters.AddWithValue("@Nome", nome);
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            int utenteId = reader.GetInt32(0);
+                            reader.Close();
+
+                            string insertCarrelloQuery = "INSERT INTO Carrello (UtenteId) VALUES (@UtenteId)";
+                            using (SqlCommand cmdcarrello = new SqlCommand(insertCarrelloQuery, Db.conn))
+                            {
+                                cmdcarrello.Parameters.AddWithValue("@UtenteId", utenteId);
+                                cmdcarrello.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                }
+
+
+                string queryCookie = "SELECT Id, Email FROM Utente WHERE Username = @username AND Password = @Password";
+                using (SqlCommand cmd = new SqlCommand(queryCookie, Db.conn))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@password", password);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        int userId = (int)reader["Id"];
+                        string userEmail = reader["Email"].ToString();
+                        reader.Close();
+
+                        HttpCookie userCookie = new HttpCookie("UserDetails");
+                        userCookie["UserId"] = userId.ToString();
+                        userCookie["UserEmail"] = userEmail;
+
+                        userCookie.Expires = DateTime.Now.AddDays(1);
+
+                        Response.Cookies.Add(userCookie);
+                    }
+                }
+
+
+
+
+
+
+
 
                 TextBox1.Text = "";
                 TextBox2.Text = "";
                 TextBox3.Text = "";
                 TextBox4.Text = "";
                 TextBox5.Text = "";
+                TextBox6.Text = "";
+
+
+
+
+
+
+
             }
             catch (Exception err)
             {
@@ -98,6 +162,7 @@ namespace BW_BE_S4_Ecommerce
             finally
             {
                 Db.conn.Close();
+                Response.Redirect("Home.aspx");
             }
         }
 
