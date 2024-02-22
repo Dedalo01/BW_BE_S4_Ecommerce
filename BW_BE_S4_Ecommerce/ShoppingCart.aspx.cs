@@ -11,15 +11,10 @@ namespace BW_BE_S4_Ecommerce
 
     public partial class ShoppingCart : System.Web.UI.Page
     {
-        List<int> products;
-        double totalCartPrice = 0;
+
         DataTable dt;
         protected void Page_Load(object sender, EventArgs e)
         {
-
-
-
-
             if (!IsPostBack)
             {
 
@@ -27,7 +22,6 @@ namespace BW_BE_S4_Ecommerce
                 {
                     RetrieveDataFromSession();
 
-                    //TotalCartPrice(dt);
                 }
                 else if (Log.log == true)
                 {
@@ -37,29 +31,13 @@ namespace BW_BE_S4_Ecommerce
             }
         }
 
-
-        // inserisco lettura carello session
-        // private DataTable GenerateDtCartItems()
-        //{
-        //    DataTable dt = new DataTable();
-        //dt.Columns.Add("ID", typeof(int));
-        //    dt.Columns.Add("Nome", typeof(string));
-        //    dt.Columns.Add("Prezzo", typeof(double));
-        //    dt.Columns.Add("Quantita", typeof(int));
-
-        //    return dt;
-        //}
-
         protected void RetrieveDataFromSession()
         {
-
             HttpCookie cookie = Request.Cookies["ProductID"];
             HttpCookie cookieQuantity = Request.Cookies["ProductQuantity"];
 
-            //DataTable dt = new DataTable();
             dt = new DataTable();
-            //DataTable dt = ShoppingCartDataTable.CartTable;
-            //ShoppingCartDataTable.ShopTable;
+
             dt.Columns.Add("ID", typeof(int));
             dt.Columns.Add("Nome", typeof(string));
             dt.Columns.Add("Prezzo", typeof(double));
@@ -95,9 +73,7 @@ namespace BW_BE_S4_Ecommerce
                     }
                 }
 
-
             }
-
 
             ShoppingCartDataTable.CartTable = dt;
             rptCartItems.DataSource = ShoppingCartDataTable.CartTable;
@@ -114,29 +90,35 @@ namespace BW_BE_S4_Ecommerce
                 // Aumenta la quantità
                 int productId = int.Parse(e.CommandArgument.ToString());
                 TextBox quantityTextBox = (TextBox)e.Item.FindControl("quantityTextBox");
+
                 int quantity = int.Parse(quantityTextBox.Text);
+
                 quantity++;
                 quantityTextBox.Text = quantity.ToString();
-                TotalCartPrice(ShoppingCartDataTable.CartTable, quantityTextBox.Text, productId);
 
+                UpdateQuantityInDataTable(productId, quantity);
+                TotalCartPrice(ShoppingCartDataTable.CartTable);
             }
             else if (e.CommandName == "Decrease")
             {
                 // Diminuisci la quantità
                 int productId = int.Parse(e.CommandArgument.ToString());
                 TextBox quantityTextBox = (TextBox)e.Item.FindControl("quantityTextBox");
+
                 int quantity = int.Parse(quantityTextBox.Text);
-                if (quantity > 1)
+
+                if (quantity > 0)
                 {
                     quantity--;
                     quantityTextBox.Text = quantity.ToString();
-                    TotalCartPrice(ShoppingCartDataTable.CartTable, quantityTextBox.Text, productId);
+
+                    UpdateQuantityInDataTable(productId, quantity);
+                    TotalCartPrice(ShoppingCartDataTable.CartTable);
 
                 }
 
             }
             else if (e.CommandName == "Delete")
-
 
             {
                 int productId = Convert.ToInt32(e.CommandArgument);
@@ -158,9 +140,6 @@ namespace BW_BE_S4_Ecommerce
                 }
             }
         }
-
-
-
 
         private void BindCartRepeater()
         {
@@ -266,16 +245,15 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
         protected void btnClearSession_Click(object sender, EventArgs e)
         {
 
-            Response.Cookies["ProductID"].Value = "";
+            Request.Cookies["ProductID"].Value = "";
             Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(-1);
-            Response.Cookies["ProductQuantity"].Value = "";
+            Request.Cookies["ProductQuantity"].Value = "";
             Response.Cookies["ProductQuantity"].Expires = DateTime.Now.AddDays(-1);
 
+
+            ShoppingCartDataTable.CartTable.Clear();
             RetrieveDataFromSession();
         }
-
-
-
 
         private int GetCurrentUserId()
         {
@@ -283,8 +261,11 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
             return 6;
         }
 
-
-
+        /// <summary>
+        /// Questa Funzione calcola il totale del carrello.
+        /// 
+        /// </summary>
+        /// <param name="ShoppingListTable"></param>
         private void TotalCartPrice(DataTable ShoppingListTable)
         {
             double totalPrice = 0;
@@ -317,68 +298,16 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
 
         }
 
-        //private void TotalCartPrice(DataTable ShoppingListTable, string quantita, int prodottoId)
-        //{
-        //    double totalPrice = 0;
-        //    double totalPriceRow = 0;
-        //    double quantitaValue = double.Parse(quantita);
-
-        //    foreach (DataRow row in ShoppingListTable.Rows)
-        //    {
-        //        int prodId = int.Parse(row["ID"].ToString());
-        //        double quantityFromTable = double.Parse(row["Quantita"].ToString());
-        //        if (prodId == prodottoId && row["Prezzo"].ToString() is string prezzo)
-        //        {
-        //            if (double.TryParse(prezzo, out double prezzoValue))
-        //            {
-        //                totalPriceRow = prezzoValue * quantitaValue;
-        //                totalPrice += totalPriceRow;
-        //            }
-        //            else
-        //            {
-        //                // Gestire il caso in cui la conversione non riesce
-        //                // Ad esempio, è possibile impostare un valore predefinito o segnalare un errore.
-        //                // Qui verrà impostato un valore di default a 0, ma puoi personalizzarlo in base alle tue esigenze.
-        //                totalPrice += prezzoValue * quantitaValue;
-
-        //            }
-
-
-
-        //        }
-        //        else
-        //        {
-        //            // Gestire il caso in cui Prezzo o Quantita non siano stringhe
-        //            // Qui verrà impostato un valore di default a 0, ma puoi personalizzarlo in base alle tue esigenze.
-        //            totalPrice = 999999991;
-        //        }
-        //    }
-
-        //    LblPrezzo.Text = totalPrice.ToString();
-        //}
-
-
-        private void TotalCartPrice(DataTable ShoppingListTable, string quantita, int prodottoId)
+        private void UpdateQuantityInDataTable(int productId, int newQuantity)
         {
-            double totalPrice = 0;
-            double quantitaValue = double.Parse(quantita);
-
-            foreach (DataRow row in ShoppingListTable.Rows)
+            foreach (DataRow row in ShoppingCartDataTable.CartTable.Rows)
             {
-                if (row["ID"] is int prodId && prodId == prodottoId &&
-                    row["Quantita"] is string quantitaString && double.TryParse(quantitaString, out double quantityFromTable) &&
-                    row["Prezzo"] is string prezzoString && double.TryParse(prezzoString, out double prezzoValue))
+                if (row["ID"] is int prodId && prodId == productId)
                 {
-                    double totalPriceRow = prezzoValue * quantitaValue;
-                    totalPrice += totalPriceRow;
-                    break; // Esci dal loop dopo aver trovato e processato la riga corrispondente
+                    row["Quantita"] = newQuantity;
+                    break;
                 }
             }
-
-            LblPrezzo.Text = totalPrice.ToString();
         }
-
-
-
     }
 }
