@@ -36,7 +36,7 @@
                 <p class="whiteTest"><%# Eval("Nome") %></p>
                 <div class="d-flex mb-2 align-items-baseline">
                     <p class="d-flex me-1 whiteTest"><%# Eval("Prezzo") %>€</p>
-                    <asp:TextBox runat="server" ID="quantityTextBox" CssClass="d-flex me-1 whiteTest" Text='<%# Eval("Quantita") %>' type="number" min="0"></asp:TextBox>
+                    <asp:Label runat="server" ID="quantityTextBox" CssClass="d-flex me-1 whiteTest" Text='<%# Eval("Quantita") %>' type="number" min="0"></asp:Label>
                     <asp:Button runat="server" CommandName="Increase" CommandArgument='<%# Eval("ID") %>'
                         CssClass="btn btn-primary w-25" Text="+" />
                     <asp:Button runat="server" CommandName="Decrease" CommandArgument='<%# Eval("ID") %>'
@@ -55,8 +55,8 @@
 
 
 
+<asp:Button ID="btnClearSession" runat="server" Text="Clear Session" OnClick="btnClearSession_Click" />
 
-            <asp:Button ID="Button1" runat="server" Text="Button" CssClass="btn btn-danger" OnClick="btnClearSession_Click"/>
             <asp:Label ID="LblPrezzo" runat="server" Text=""></asp:Label>
           
         </div>
