@@ -13,7 +13,7 @@ namespace BW_BE_S4_Ecommerce
     {
         List<int> products;
         double totalCartPrice = 0;
-        //DataTable dt;
+        DataTable dt;
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -27,7 +27,7 @@ namespace BW_BE_S4_Ecommerce
                 {
                     RetrieveDataFromSession();
 
-                    TotalCartPrice(dt);
+                    //TotalCartPrice(dt);
                 }
                 else if (Log.log == true)
                 {
@@ -57,8 +57,9 @@ namespace BW_BE_S4_Ecommerce
             HttpCookie cookieQuantity = Request.Cookies["ProductQuantity"];
 
             //DataTable dt = new DataTable();
-            // dt = new DataTable();
-            ShoppingCartDataTable.ShopTable;
+            dt = new DataTable();
+            //DataTable dt = ShoppingCartDataTable.CartTable;
+            //ShoppingCartDataTable.ShopTable;
             dt.Columns.Add("ID", typeof(int));
             dt.Columns.Add("Nome", typeof(string));
             dt.Columns.Add("Prezzo", typeof(double));
@@ -98,10 +99,10 @@ namespace BW_BE_S4_Ecommerce
             }
 
 
-
-            rptCartItems.DataSource = dt;
+            ShoppingCartDataTable.CartTable = dt;
+            rptCartItems.DataSource = ShoppingCartDataTable.CartTable;
             rptCartItems.DataBind();
-            //TotalCartPrice(dt);
+            TotalCartPrice(ShoppingCartDataTable.CartTable);
         }
 
 
@@ -116,7 +117,8 @@ namespace BW_BE_S4_Ecommerce
                 int quantity = int.Parse(quantityTextBox.Text);
                 quantity++;
                 quantityTextBox.Text = quantity.ToString();
-                TotalCartPrice(dt, quantityTextBox.Text);
+                TotalCartPrice(ShoppingCartDataTable.CartTable, quantityTextBox.Text, productId);
+
             }
             else if (e.CommandName == "Decrease")
             {
@@ -128,7 +130,8 @@ namespace BW_BE_S4_Ecommerce
                 {
                     quantity--;
                     quantityTextBox.Text = quantity.ToString();
-                    TotalCartPrice(dt, quantityTextBox.Text);
+                    TotalCartPrice(ShoppingCartDataTable.CartTable, quantityTextBox.Text, productId);
+
                 }
 
             }
@@ -314,38 +317,66 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
 
         }
 
-        private void TotalCartPrice(DataTable ShoppingListTable, string quantita)
+        //private void TotalCartPrice(DataTable ShoppingListTable, string quantita, int prodottoId)
+        //{
+        //    double totalPrice = 0;
+        //    double totalPriceRow = 0;
+        //    double quantitaValue = double.Parse(quantita);
+
+        //    foreach (DataRow row in ShoppingListTable.Rows)
+        //    {
+        //        int prodId = int.Parse(row["ID"].ToString());
+        //        double quantityFromTable = double.Parse(row["Quantita"].ToString());
+        //        if (prodId == prodottoId && row["Prezzo"].ToString() is string prezzo)
+        //        {
+        //            if (double.TryParse(prezzo, out double prezzoValue))
+        //            {
+        //                totalPriceRow = prezzoValue * quantitaValue;
+        //                totalPrice += totalPriceRow;
+        //            }
+        //            else
+        //            {
+        //                // Gestire il caso in cui la conversione non riesce
+        //                // Ad esempio, è possibile impostare un valore predefinito o segnalare un errore.
+        //                // Qui verrà impostato un valore di default a 0, ma puoi personalizzarlo in base alle tue esigenze.
+        //                totalPrice += prezzoValue * quantitaValue;
+
+        //            }
+
+
+
+        //        }
+        //        else
+        //        {
+        //            // Gestire il caso in cui Prezzo o Quantita non siano stringhe
+        //            // Qui verrà impostato un valore di default a 0, ma puoi personalizzarlo in base alle tue esigenze.
+        //            totalPrice = 999999991;
+        //        }
+        //    }
+
+        //    LblPrezzo.Text = totalPrice.ToString();
+        //}
+
+
+        private void TotalCartPrice(DataTable ShoppingListTable, string quantita, int prodottoId)
         {
             double totalPrice = 0;
+            double quantitaValue = double.Parse(quantita);
 
             foreach (DataRow row in ShoppingListTable.Rows)
             {
-                if (row["Prezzo"].ToString() is string prezzo)
+                if (row["ID"] is int prodId && prodId == prodottoId &&
+                    row["Quantita"] is string quantitaString && double.TryParse(quantitaString, out double quantityFromTable) &&
+                    row["Prezzo"] is string prezzoString && double.TryParse(prezzoString, out double prezzoValue))
                 {
-                    if (double.TryParse(prezzo, out double prezzoValue) && double.TryParse(quantita, out double quantitaValue))
-                    {
-                        totalPrice += prezzoValue * quantitaValue;
-                    }
-                    else
-                    {
-                        // Gestire il caso in cui la conversione non riesce
-                        // Ad esempio, è possibile impostare un valore predefinito o segnalare un errore.
-                        // Qui verrà impostato un valore di default a 0, ma puoi personalizzarlo in base alle tue esigenze.
-                        totalPrice = 99999999;
-                    }
-                }
-                else
-                {
-                    // Gestire il caso in cui Prezzo o Quantita non siano stringhe
-                    // Qui verrà impostato un valore di default a 0, ma puoi personalizzarlo in base alle tue esigenze.
-                    totalPrice = 999999991;
+                    double totalPriceRow = prezzoValue * quantitaValue;
+                    totalPrice += totalPriceRow;
+                    break; // Esci dal loop dopo aver trovato e processato la riga corrispondente
                 }
             }
 
             LblPrezzo.Text = totalPrice.ToString();
         }
-
-
 
 
 
