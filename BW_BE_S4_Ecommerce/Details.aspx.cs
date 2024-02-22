@@ -103,8 +103,7 @@ namespace BW_BE_S4_Ecommerce
             Response.Cookies["ProductQuantity"].Value = string.Join(",", productQuantities);
             Response.Cookies["ProductQuantity"].Expires = DateTime.Now.AddDays(1);
 
-            //txtQuantity.Enabled = false;
-            //btnAddCart.Enabled = false;
+           
         }
 
             }

@@ -119,26 +119,33 @@ namespace BW_BE_S4_Ecommerce
 
             }
             else if (e.CommandName == "Delete")
-
             {
                 int productId = Convert.ToInt32(e.CommandArgument);
-                HttpCookie cookie = Request.Cookies["ProductID"];
+                HttpCookie cookieId = Request.Cookies["ProductID"];
+                HttpCookie cookieQuantity = Request.Cookies["ProductQuantity"];
 
-                if (cookie != null && !string.IsNullOrEmpty(cookie.Value))
+                if (cookieId != null && !string.IsNullOrEmpty(cookieId.Value) && cookieQuantity != null && !string.IsNullOrEmpty(cookieQuantity.Value))
                 {
-                    List<int> productIds = cookie.Value.Split(',').Select(id => Convert.ToInt32(id)).ToList();
+                    List<int> productIds = cookieId.Value.Split(',').Select(id => Convert.ToInt32(id)).ToList();
+                    List<int> productQuantities = cookieQuantity.Value.Split(',').Select(qty => Convert.ToInt32(qty)).ToList();
 
                     if (productIds.Contains(productId))
                     {
-                        productIds.Remove(productId);
+                        int index = productIds.IndexOf(productId);
+                        productIds.RemoveAt(index);
+                        productQuantities.RemoveAt(index); 
 
-                        cookie.Value = string.Join(",", productIds);
-                        Response.Cookies.Add(cookie);
+                        cookieId.Value = string.Join(",", productIds);
+                        cookieQuantity.Value = string.Join(",", productQuantities);
+
+                        Response.Cookies.Add(cookieId);
+                        Response.Cookies.Add(cookieQuantity);
 
                         RetrieveDataFromSession();
                     }
                 }
             }
+
         }
 
         private void BindCartRepeater()
