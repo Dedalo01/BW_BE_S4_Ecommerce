@@ -19,6 +19,13 @@ namespace BW_BE_S4_Ecommerce
                 Response.Cookies.Add(userCookie);
             }
             Log.log = false;
+
+            if(Log._admin == true)
+            {
+                Log._admin = false;
+            }
+
+
             Response.Redirect("Home.aspx");
         }
     }

@@ -24,15 +24,6 @@ namespace BW_BE_S4_Ecommerce
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// Controllo ProductRepeaterAdmin.
-        /// </summary>
-        /// <remarks>
-        /// Campo generato automaticamente.
-        /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater ProductRepeaterAdmin;
-
-        /// <summary>
         /// Controllo Label1.
         /// </summary>
         /// <remarks>
@@ -112,5 +103,14 @@ namespace BW_BE_S4_Ecommerce
         /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button Login;
+
+        /// <summary>
+        /// Controllo ProductRepeaterAdmin.
+        /// </summary>
+        /// <remarks>
+        /// Campo generato automaticamente.
+        /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater ProductRepeaterAdmin;
     }
 }

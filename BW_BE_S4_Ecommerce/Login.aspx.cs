@@ -23,7 +23,7 @@ namespace BW_BE_S4_Ecommerce
             {
                 Db.conn.Open();
 
-                string query = "SELECT Id, Email FROM Utente WHERE Username = @username AND Password = @Password";
+                string query = "SELECT Id, Email,RuoloId FROM Utente WHERE Username = @username AND Password = @Password";
 
                 using (SqlCommand cmd = new SqlCommand(query, Db.conn))
                 {
@@ -36,7 +36,11 @@ namespace BW_BE_S4_Ecommerce
                     {
                         int userId = (int)reader["Id"];
                         string userEmail = reader["Email"].ToString();
+                        int ruoloId = (int)reader["RuoloId"];
                         reader.Close();
+
+
+
 
 
                         string insertCarrelloQuery = "IF NOT EXISTS (SELECT 1 FROM Carrello WHERE UtenteId = @UtenteId) " +
@@ -50,6 +54,14 @@ namespace BW_BE_S4_Ecommerce
 
 
                         Db.conn.Close();
+
+
+                        if(ruoloId == 1)
+                        {
+                            Log._admin = true;
+                        }
+
+
 
                         HttpCookie userCookie = new HttpCookie("UserDetails");
                         userCookie["UserId"] = userId.ToString();
