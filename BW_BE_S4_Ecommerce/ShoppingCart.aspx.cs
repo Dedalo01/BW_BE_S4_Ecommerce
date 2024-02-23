@@ -215,6 +215,16 @@ namespace BW_BE_S4_Ecommerce
             }
             else if (e.CommandName == "Delete")
             {
+
+                if (Request.Cookies["UserDetails"] != null)
+                {
+                    // Ottieni il valore del cookie
+                    HttpCookie userCookie = Request.Cookies["UserDetails"];
+
+                }
+
+
+
                 int productId = Convert.ToInt32(e.CommandArgument);
                 HttpCookie cookieId = Request.Cookies["ProductID"];
                 HttpCookie cookieQuantity = Request.Cookies["ProductQuantity"];
@@ -239,6 +249,8 @@ namespace BW_BE_S4_Ecommerce
                         RetrieveDataFromSession();
                     }
                 }
+
+
             }
 
         }
