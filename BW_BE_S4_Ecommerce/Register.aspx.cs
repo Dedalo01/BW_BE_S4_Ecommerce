@@ -34,6 +34,7 @@ namespace BW_BE_S4_Ecommerce
             String password = TextBox4.Text;
             String username = TextBox6.Text;
 
+
             try
             {
                 Db.conn.Open();
@@ -136,6 +137,8 @@ namespace BW_BE_S4_Ecommerce
 
                         userCookie.Expires = DateTime.Now.AddDays(1);
 
+                        Log.log = true;
+
                         Response.Cookies.Add(userCookie);
                     }
                 }
@@ -167,8 +170,17 @@ namespace BW_BE_S4_Ecommerce
             }
             finally
             {
-                Db.conn.Close();
-                Response.Redirect("Home.aspx");
+                
+                if (Log.log == true)
+                {
+                    Db.conn.Close();
+                    Response.Redirect("Home.aspx");
+
+                }
+                else
+                {
+                    Db.conn.Close();
+                }
             }
         }
 

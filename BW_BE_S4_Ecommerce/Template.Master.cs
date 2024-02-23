@@ -18,6 +18,7 @@ namespace BW_BE_S4_Ecommerce
                 userCookie.Expires = DateTime.Now.AddDays(-21);
                 Response.Cookies.Add(userCookie);
             }
+
             Log.log = false;
 
             if(Log._admin == true)
