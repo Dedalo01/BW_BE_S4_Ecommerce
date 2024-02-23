@@ -30,13 +30,47 @@ namespace BW_BE_S4_Ecommerce
                 //}
 
                 int userId = GetCurrentUserId();
-                int cartId;
+
                 if (userId > 0)
                 {
-                    cartId = GetUserCartId(userId);
+                    RetrieveDataFromDatabase(userId);
 
                 }
-                RetrieveDataFromSession();
+                else
+                {
+
+                    RetrieveDataFromSession();
+                }
+            }
+        }
+
+        protected void RetrieveDataFromDatabase(int userId)
+        {
+
+            string selectProductForCartQuery = @"SELECT p.Id AS ID, p.Nome, p.Prezzo, pc.Quantita FROM Carrello c
+                                 JOIN ProdottoInCarrello pc ON c.Id = pc.CarrelloId
+                                 JOIN Prodotto p ON pc.ProdottoId = p.Id
+                                 WHERE c.UtenteId = @UtenteId";
+
+            try
+            {
+                Db.conn.Open();
+                SqlCommand cmd = new SqlCommand(selectProductForCartQuery, Db.conn);
+                cmd.Parameters.AddWithValue("@UtenteId", userId);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                rptCartItems.DataSource = reader;
+                rptCartItems.DataBind();
+
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+            }
+            finally
+            {
+                Db.conn.Close();
             }
         }
 
