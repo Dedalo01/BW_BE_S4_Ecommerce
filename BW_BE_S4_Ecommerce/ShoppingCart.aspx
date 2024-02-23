@@ -51,7 +51,7 @@
 </ul>
 
 
-            <asp:Button ID="Button1" runat="server" Text="Svuota Carrello" CssClass="btn btn-danger" OnClick="btnClearSession_Click"/>
+            <asp:Button ID="Button1" runat="server" Text="Svuota Carrello" CssClass="btn btn-danger" OnClick="ClearAllItemsCart_Click"/>
             <asp:Label ID="LblPrezzo" runat="server" Text=""></asp:Label>
           
         </div>

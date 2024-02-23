@@ -13,6 +13,8 @@ namespace BW_BE_S4_Ecommerce
     {
 
         DataTable dt;
+        //int userId;
+        //int cartId;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -27,6 +29,13 @@ namespace BW_BE_S4_Ecommerce
                 //    //BindCartRepeater();
                 //}
 
+                int userId = GetCurrentUserId();
+                int cartId;
+                if (userId > 0)
+                {
+                    cartId = GetUserCartId(userId);
+
+                }
                 RetrieveDataFromSession();
             }
         }
@@ -65,6 +74,10 @@ namespace BW_BE_S4_Ecommerce
                                 dt.Rows.Add(dataReader["ID"], dataReader["Nome"], dataReader["Prezzo"], quantity);
                             }
                             dataReader.Close();
+                        }
+                        catch (Exception ex)
+                        {
+
                         }
                         finally
                         {
@@ -180,6 +193,8 @@ namespace BW_BE_S4_Ecommerce
 
         protected void rptCartItems_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
+
+            int userId = GetCurrentUserId();
             if (e.CommandName == "Increase")
             {
                 // Aumenta la quantità
@@ -193,12 +208,17 @@ namespace BW_BE_S4_Ecommerce
 
                 UpdateQuantityInDataTable(productId, quantity);
                 TotalCartPrice(ShoppingCartDataTable.CartTable);
+                if (userId > 0)
+                {
+                    UpdateQuantityInDatabase(productId, quantity, userId);
+                }
             }
             else if (e.CommandName == "Decrease")
             {
                 // Diminuisci la quantità
                 int productId = int.Parse(e.CommandArgument.ToString());
                 TextBox quantityTextBox = (TextBox)e.Item.FindControl("quantityTextBox");
+
 
                 int quantity = int.Parse(quantityTextBox.Text);
 
@@ -209,25 +229,26 @@ namespace BW_BE_S4_Ecommerce
 
                     UpdateQuantityInDataTable(productId, quantity);
                     TotalCartPrice(ShoppingCartDataTable.CartTable);
+                    if (userId > 0)
+                    {
+                        UpdateQuantityInDatabase(productId, quantity, userId);
+                    }
+                    //TODO: Bottone decrease rimuove 1 di quantità / sovrascrive nuova quantità ?
 
                 }
 
             }
             else if (e.CommandName == "Delete")
             {
-
-                if (Request.Cookies["UserDetails"] != null)
-                {
-                    // Ottieni il valore del cookie
-                    HttpCookie userCookie = Request.Cookies["UserDetails"];
-
-                }
-
-
-
                 int productId = Convert.ToInt32(e.CommandArgument);
                 HttpCookie cookieId = Request.Cookies["ProductID"];
                 HttpCookie cookieQuantity = Request.Cookies["ProductQuantity"];
+
+
+                if (userId >= 0)
+                {
+                    RemoveProductFromCart(userId, productId);
+                }
 
                 if (cookieId != null && !string.IsNullOrEmpty(cookieId.Value) && cookieQuantity != null && !string.IsNullOrEmpty(cookieQuantity.Value))
                 {
@@ -253,6 +274,36 @@ namespace BW_BE_S4_Ecommerce
 
             }
 
+        }
+
+        private void UpdateQuantityInDatabase(int productId, int quantity, int userId)
+        {
+            string findCartQuery = @"SELECT c.Id FROM Carrello c
+                                            JOIN Utente u ON c.UtenteId = u.Id
+                                            WHERE u.Id = @userId";
+            string updateQtInDbQuery = "UPDATE ProdottoInCarrello SET Quantita = @quantita WHERE CarrelloId = @cartId AND ProdottoId = @prodId";
+
+            try
+            {
+                Db.conn.Open();
+                SqlCommand findCartId = new SqlCommand(findCartQuery, Db.conn);
+                findCartId.Parameters.AddWithValue("userId", userId);
+                int cartId = (int)findCartId.ExecuteScalar();
+
+                SqlCommand updateQt = new SqlCommand(updateQtInDbQuery, Db.conn);
+                updateQt.Parameters.AddWithValue("quantita", quantity);
+                updateQt.Parameters.AddWithValue("cartId", cartId);
+                updateQt.Parameters.AddWithValue("prodId", productId);
+                updateQt.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                Response.Write(ex.Message);
+            }
+            finally
+            {
+                Db.conn.Close();
+            }
         }
 
         //private void BindCartRepeater()
@@ -306,7 +357,7 @@ namespace BW_BE_S4_Ecommerce
         private void RemoveProductFromCart(int utenteId, int prodottoId)
         {
             string deleteQuery = @"DELETE FROM ProdottoInCarrello 
-WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND ProdottoId = @ProdottoId";
+                                    WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND ProdottoId = @ProdottoId";
 
             try
             {
@@ -329,35 +380,36 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
 
         }
 
-        protected void rptCartItems_ItemCommand1(object source, RepeaterCommandEventArgs e)
+        //protected void rptCartItems_ItemCommand1(object source, RepeaterCommandEventArgs e)
+        //{
+        //    if (e.CommandName == "AddToCart")
+        //    {
+        //        int prodID;
+        //        if (int.TryParse(e.CommandArgument.ToString(), out prodID))
+        //        {
+
+
+        //            List<int> products;
+        //            if (Request.Cookies["ProductID"] == null || string.IsNullOrEmpty(Request.Cookies["ProductID"].Value))
+        //            {
+        //                products = new List<int>();
+        //            }
+        //            else
+        //            {
+        //                string[] productIDs = Request.Cookies["ProductID"].Value.Split(',');
+        //                products = new List<int>(Array.ConvertAll(productIDs, int.Parse));
+        //            }
+
+        //            Response.Cookies["ProductID"].Value = string.Join(",", products);
+        //            Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(1);
+        //        }
+        //    }
+        //}
+
+
+        protected void ClearAllItemsCart_Click(object sender, EventArgs e)
         {
-            if (e.CommandName == "AddToCart")
-            {
-                int prodID;
-                if (int.TryParse(e.CommandArgument.ToString(), out prodID))
-                {
-
-
-                    List<int> products;
-                    if (Request.Cookies["ProductID"] == null || string.IsNullOrEmpty(Request.Cookies["ProductID"].Value))
-                    {
-                        products = new List<int>();
-                    }
-                    else
-                    {
-                        string[] productIDs = Request.Cookies["ProductID"].Value.Split(',');
-                        products = new List<int>(Array.ConvertAll(productIDs, int.Parse));
-                    }
-
-                    Response.Cookies["ProductID"].Value = string.Join(",", products);
-                    Response.Cookies["ProductID"].Expires = DateTime.Now.AddDays(1);
-                }
-            }
-        }
-
-
-        protected void btnClearSession_Click(object sender, EventArgs e)
-        {
+            int userId = GetCurrentUserId();
             if (Request.Cookies["ProductID"] != null && Request.Cookies["ProductQuantity"] != null)
             {
                 Request.Cookies["ProductID"].Value = "";
@@ -368,14 +420,75 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
 
                 ShoppingCartDataTable.CartTable.Clear();
                 RetrieveDataFromSession();
+
+            }
+            if (userId > 0)
+            {
+                ClearProductsInCartFromDb();
             }
 
         }
 
+        private void ClearProductsInCartFromDb()
+        {
+            int userId = GetCurrentUserId();
+            int cartId = GetUserCartId(userId);
+            try
+            {
+                Db.conn.Open();
+                string clearProdsFromCartQuery = "DELETE FROM ProdottoInCarrello WHERE CarrelloId = @cartId";
+
+                SqlCommand clearProdsCmd = new SqlCommand(clearProdsFromCartQuery, Db.conn);
+                clearProdsCmd.Parameters.AddWithValue("cartId", cartId);
+                clearProdsCmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                Db.conn.Close();
+            }
+        }
+
         private int GetCurrentUserId()
         {
-            // unico utente col carrello al momento. Ha id 6
-            return 6;
+            if (Request.Cookies["UserDetails"] != null)
+            {
+                HttpCookie user = Request.Cookies["UserDetails"];
+                int userId = int.Parse(user["UserId"]);
+
+                return userId;
+            }
+
+            return -1;
+        }
+
+        private int GetUserCartId(int userId)
+        {
+            string getUserCartId = @"SELECT c.Id FROM Carrello c
+                                            JOIN Utente u ON c.UtenteId = u.Id
+                                            WHERE u.Id = @userId";
+            try
+            {
+                Db.conn.Open();
+                SqlCommand getUserCartCmd = new SqlCommand(getUserCartId, Db.conn);
+                getUserCartCmd.Parameters.AddWithValue("userId", userId);
+
+                int cartId = (int)getUserCartCmd.ExecuteScalar();
+
+                return cartId;
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                Db.conn.Close();
+            }
+
+            return -1;
         }
 
         /// <summary>
@@ -422,7 +535,7 @@ WHERE CarrelloId IN (SELECT Id FROM Carrello WHERE UtenteId = @UtenteId) AND Pro
                 if (row["ID"] is int prodId && prodId == productId)
                 {
                     row["Quantita"] = newQuantity;
-                    break;
+                    return;
                 }
             }
         }

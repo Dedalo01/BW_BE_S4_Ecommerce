@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Web;
 
 
 namespace BW_BE_S4_Ecommerce
@@ -51,7 +52,12 @@ namespace BW_BE_S4_Ecommerce
             // if (Log.log == false)
             // {
             // COOKIE
-
+            int userId = GetCurrentUserId();
+            int cartId;
+            if (userId > 0)
+            {
+                cartId = GetUserCartId(userId);
+            }
             int prodID;
             if (int.TryParse(ProductID, out prodID))
             {
@@ -180,9 +186,49 @@ namespace BW_BE_S4_Ecommerce
         //    }
         //}
 
-        protected void btnEdit_Click(object sender, EventArgs e)
+        //protected void btnEdit_Click(object sender, EventArgs e)
+        //{
+        //    Response.Redirect($"EditProduct.aspx?product={ProductID}");
+        //}
+
+        private int GetCurrentUserId()
         {
-            Response.Redirect($"EditProduct.aspx?product={ProductID}");
+            if (Request.Cookies["UserDetails"] != null)
+            {
+                HttpCookie user = Request.Cookies["UserDetails"];
+                int userId = int.Parse(user["UserId"]);
+
+                return userId;
+            }
+
+            return -1;
+        }
+
+        private int GetUserCartId(int userId)
+        {
+            string getUserCartId = @"SELECT c.Id FROM Carrello c
+                                            JOIN Utente u ON c.UtenteId = u.Id
+                                            WHERE u.Id = @userId";
+            try
+            {
+                Db.conn.Open();
+                SqlCommand getUserCartCmd = new SqlCommand(getUserCartId, Db.conn);
+                getUserCartCmd.Parameters.AddWithValue("userId", userId);
+
+                int cartId = (int)getUserCartCmd.ExecuteScalar();
+
+                return cartId;
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                Db.conn.Close();
+            }
+
+            return -1;
         }
     }
 }
