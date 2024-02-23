@@ -12,11 +12,14 @@
 <body class="bg-info d-flex justify-content-center align-items-center">
     <form id="form1" runat="server">
 
-        <div>
-            <asp:Button ID="Button1" runat="server" Text="Button" OnClick="Button1_Click" />
-        </div>
+
 
         <div class="border border-black p-3 rounded m-2 bg-white">
+            <div>
+                <asp:Button ID="Button1" runat="server" Text="Home" OnClick="Button1_Click" />
+            </div>
+
+
             <h3>Aggiungi Prodotto</h3>
 
             <div>
@@ -81,16 +84,14 @@
                                         <asp:Label ID="DescrizioneLabel" runat="server" Text='<%# Eval("Descrizione") %>' Visible="true"></asp:Label>
                                         <asp:TextBox ID="DescrizioneTextBox" runat="server" Text='<%# Eval("Descrizione") %>' Visible="false"></asp:TextBox><br />
 
-                                        
-                                <div class="d-flex justify-content-center">
-                                    <asp:Button ID="EditButton" runat="server" CssClass="btn btn-primary" Text="Modifica Prodotto" CommandName="Modifica" CommandArgument='<%# Eval("ID") %>' />
-                                    <asp:Button ID="DeleteButton" runat="server" CssClass="btn btn-danger" Text="Cancella Prodotto" CommandName="Delete" CommandArgument='<%# Eval("ID") %>' />
-                                    <asp:Button ID="ConfirmButton" runat="server" CssClass="btn btn-primary" Text="Conferma Modifiche" CommandName="Confirm" CommandArgument='<%# Eval("ID") %>' Visible="false" />
-                                </div>
+
+                                        <div class="d-flex justify-content-center">
+                                            <asp:Button ID="EditButton" runat="server" CssClass="btn btn-primary" Text="Modifica Prodotto" CommandName="Modifica" CommandArgument='<%# Eval("ID") %>' />
+                                            <asp:Button ID="DeleteButton" runat="server" CssClass="btn btn-danger" Text="Cancella Prodotto" CommandName="Delete" CommandArgument='<%# Eval("ID") %>' />
+                                            <asp:Button ID="ConfirmButton" runat="server" CssClass="btn btn-primary" Text="Conferma Modifiche" CommandName="Confirm" CommandArgument='<%# Eval("ID") %>' Visible="false" />
+                                        </div>
                                     </div>
                                 </div>
-
-
                             </div>
 
                         </li>
