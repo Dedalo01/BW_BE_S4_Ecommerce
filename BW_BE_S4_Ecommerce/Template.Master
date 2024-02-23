@@ -29,9 +29,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="ShoppingCart.aspx">Carelo</a>
                         </li>
-                        <li class="nav-item">
+                        <%--<li class="nav-item">
                             <a class="nav-link" href="InsertProduct.aspx">Inserisci Prodotto</a>
-                        </li>
+                        </li>--%>
 
                         <% if (BW_BE_S4_Ecommerce.Log._admin == true)
                             { %>
