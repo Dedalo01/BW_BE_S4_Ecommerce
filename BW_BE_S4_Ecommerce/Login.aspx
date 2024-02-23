@@ -28,6 +28,7 @@
                 </div>
                 <asp:Button ID="Login" runat="server" Text="Login" OnClick="Login_Click" CssClass="btn btn-primary d-block mx-auto" />
                 <asp:Label ID="Label3" runat="server" Text="" CssClass="text-danger"></asp:Label>
+                <asp:Button ID="btnVaiHome" runat="server" Text="Vai alla Home" OnClick="btnVaiHome_Click" CssClass="btn btn-primary d-block mx-auto mt-3" />
             </form>
         </div>
     </div>

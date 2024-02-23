@@ -78,6 +78,11 @@ namespace BW_BE_S4_Ecommerce
                 Label3.Text = "Si è verificato un errore durante il tentativo di accesso.";
             }
         }
+        protected void btnVaiHome_Click(object sender, EventArgs e)
+        {
+            // Effettua il reindirizzamento alla pagina "Home.aspx"
+            Response.Redirect("~/Home.aspx");
+        }
 
 
     }
