@@ -4,14 +4,18 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="Scripts/bootstrap.min.js"></script>
     <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
-<body>
+<body class="bg-info d-flex justify-content-center align-items-center">
+    <!-- Aggiunto d-flex per abilitare il flexbox e le classi di allineamento -->
     <form id="form1" runat="server">
-        <div>
 
-            
+
+
+        <div class="border border-black p-3 rounded m-2 bg-white">
             <h3>Aggiungi Prodotto</h3>
 
             <div>
@@ -42,23 +46,20 @@
                 <asp:Button ID="Login" runat="server" Text="Aggiungi Prodotto" OnClick="Inserimento_Click" CssClass="btn btn-primary d-block mx-auto" />
             </div>
 
+        </div>
 
 
 
 
 
-
-
-
-
-
+        <div class="border border-black p-3 rounded m-2 bg-white">
             <h3>Prodotti</h3>
 
-            <ul>
+            <ul class="p-0">
                 <asp:Repeater ID="ProductRepeaterAdmin" runat="server" OnItemCommand="ProductRepeaterAdmin_ItemCommand">
                     <ItemTemplate>
-                        <li class="d-flex flex-column">
-                            <img src='<%# Eval("ImmagineUrl") %>' alt="Immagine del prodotto" width="50" />
+                        <li class="d-flex flex-column mt-3">
+                            <img src='<%# Eval("ImmagineUrl") %>' alt="Immagine del prodotto" width="125" />
                             <div>
                                 <strong>Nome:</strong>
                                 <asp:Label ID="NomeLabel" runat="server" Text='<%# Eval("Nome") %>' Visible="true"></asp:Label>
@@ -77,6 +78,7 @@
                                 <asp:TextBox ID="ImmagineUrlTextBox" runat="server" Text='<%# Eval("ImmagineUrl") %>' Visible="false"></asp:TextBox><br />
                             </div>
 
+
                             <asp:Button ID="EditButton" runat="server" Text="Modifica" CommandName="Modifica" CommandArgument='<%# Eval("ID") %>' />
                             <asp:Button ID="DeleteButton" runat="server" Text="Cancella" CommandName="Delete" CommandArgument='<%# Eval("ID") %>' />
                             <asp:Button ID="ConfirmButton" runat="server" Text="Conferma Modifiche" CommandName="Confirm" CommandArgument='<%# Eval("ID") %>' Visible="false" />
@@ -84,7 +86,8 @@
                     </ItemTemplate>
                 </asp:Repeater>
             </ul>
-
+        </div>
     </form>
 </body>
+
 </html>

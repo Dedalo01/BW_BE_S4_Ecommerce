@@ -13,6 +13,14 @@ namespace BW_BE_S4_Ecommerce
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!Log._admin)
+            {
+                Response.Redirect("Home.aspx");
+            }
+
+
+
+
             if (!IsPostBack)
             {
                 BindProductData();
