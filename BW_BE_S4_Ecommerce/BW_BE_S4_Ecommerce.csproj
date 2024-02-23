@@ -65,6 +65,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Admin.aspx" />
+    <Content Include="Assets\Immagini\export-unscreen.gif" />
+    <Content Include="Assets\Immagini\home-unscreen.gif" />
+    <Content Include="Assets\Immagini\LogoInnerJoin.png" />
+    <Content Include="Assets\Immagini\shopping-cart-unscreen.gif" />
     <Content Include="Details.aspx" />
     <Content Include="EditProduct.aspx" />
     <Content Include="Home.aspx" />
