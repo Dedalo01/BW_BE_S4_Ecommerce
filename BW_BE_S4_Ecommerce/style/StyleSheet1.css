@@ -1,11 +1,13 @@
 ﻿h1 {
-    font-size: 2em;
+    font-size: 8em;
     text-align: center;
-    color: #333;
+    color: rgba(0, 0, 0, 0.8);
     opacity: 0;
     transform: translateY(-50px);
+    font-family: cursive; /* Modifica del tipo di carattere */
     animation: fadeInUp 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
 }
+
 
 @keyframes fadeInUp {
     to {
@@ -14,7 +16,7 @@
     }
 }
 body {
-    background-image: url('unnamed.jpg')
+ back
 }
 .card {
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Aggiunge una transizione fluida */
