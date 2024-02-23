@@ -20,6 +20,12 @@ namespace BW_BE_S4_Ecommerce
             }
         }
 
+        protected void Annulla_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Home.aspx");
+        }
+
+
         protected void Button1_Click(object sender, EventArgs e)
         {
             String nome = TextBox1.Text;
