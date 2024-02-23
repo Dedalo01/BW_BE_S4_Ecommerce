@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Admin.aspx.cs" Inherits="BW_BE_S4_Ecommerce.Admin" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true"  CodeBehind="Admin.aspx.cs" Inherits="BW_BE_S4_Ecommerce.Admin" %>
 
 <!DOCTYPE html>
 
@@ -10,10 +10,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body class="bg-info d-flex justify-content-center align-items-center">
-    <!-- Aggiunto d-flex per abilitare il flexbox e le classi di allineamento -->
     <form id="form1" runat="server">
 
-
+        <div>
+            <asp:Button ID="Button1" runat="server" Text="Button" OnClick="Button1_Click" />
+        </div>
 
         <div class="border border-black p-3 rounded m-2 bg-white">
             <h3>Aggiungi Prodotto</h3>
