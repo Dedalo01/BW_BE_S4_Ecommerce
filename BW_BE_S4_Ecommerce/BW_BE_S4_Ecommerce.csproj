@@ -66,6 +66,7 @@
   <ItemGroup>
     <Content Include="Admin.aspx" />
     <Content Include="Assets\Immagini\advFun.png" />
+    <Content Include="Assets\Immagini\Ecommerce-video.mp4" />
     <Content Include="Assets\Immagini\export-unscreen.gif" />
     <Content Include="Assets\Immagini\home-unscreen.gif" />
     <Content Include="Assets\Immagini\LogoInnerJoin.png" />
