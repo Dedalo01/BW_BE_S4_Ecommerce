@@ -11,6 +11,47 @@
     <form id="form1" runat="server">
         <div>
 
+            
+            <h3>Aggiungi Prodotto</h3>
+
+            <div>
+                <div class="mb-3">
+                    <asp:Label ID="Label1" runat="server" CssClass="form-label" Text="Nome"></asp:Label>
+                    <div>
+                        <asp:TextBox ID="nomeProdottoBox" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <asp:Label ID="Label2" runat="server" CssClass="form-label" Text="Descrizione"></asp:Label>
+                    <div>
+                        <asp:TextBox ID="descrizioneProdottoBox" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <asp:Label ID="Label3" runat="server" CssClass="form-label" Text="Prezzo"></asp:Label>
+                    <div>
+                        <asp:TextBox ID="prezzoProdottoBox" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <asp:Label ID="Label4" runat="server" CssClass="form-label" Text="ImmageUrl"></asp:Label>
+                    <div>
+                        <asp:TextBox ID="immageUrlProdottoBox" runat="server" CssClass="form-control"></asp:TextBox>
+                    </div>
+                </div>
+                <asp:Button ID="Login" runat="server" Text="Aggiungi Prodotto" OnClick="Inserimento_Click" CssClass="btn btn-primary d-block mx-auto" />
+            </div>
+
+
+
+
+
+
+
+
+
+
+
             <h3>Prodotti</h3>
 
             <ul>
@@ -44,35 +85,6 @@
                 </asp:Repeater>
             </ul>
 
-            <h3>Aggiungi Prodotto</h3>
-
-            <div>
-                <div class="mb-3">
-                    <asp:Label ID="Label1" runat="server" CssClass="form-label" Text="Nome"></asp:Label>
-                    <div>
-                        <asp:TextBox ID="nomeProdottoBox" runat="server" CssClass="form-control"></asp:TextBox>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <asp:Label ID="Label2" runat="server" CssClass="form-label" Text="Descrizione"></asp:Label>
-                    <div>
-                        <asp:TextBox ID="descrizioneProdottoBox" runat="server" CssClass="form-control"></asp:TextBox>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <asp:Label ID="Label3" runat="server" CssClass="form-label" Text="Prezzo"></asp:Label>
-                    <div>
-                        <asp:TextBox ID="prezzoProdottoBox" runat="server" CssClass="form-control"></asp:TextBox>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <asp:Label ID="Label4" runat="server" CssClass="form-label" Text="ImmageUrl"></asp:Label>
-                    <div>
-                        <asp:TextBox ID="immageUrlProdottoBox" runat="server" CssClass="form-control"></asp:TextBox>
-                    </div>
-                </div>
-                <asp:Button ID="Login" runat="server" Text="Aggiungi Prodotto" OnClick="Inserimento_Click" CssClass="btn btn-primary d-block mx-auto" />
-            </div>
     </form>
 </body>
 </html>

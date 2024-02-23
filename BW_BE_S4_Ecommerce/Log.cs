@@ -7,6 +7,7 @@ namespace BW_BE_S4_Ecommerce
 {
     public class Log
     {
+        public static bool _admin = false;
         
         static Log()
         {

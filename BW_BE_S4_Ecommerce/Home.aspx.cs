@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Reflection.Emit;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using BW_BE_S4_Ecommerce;
@@ -15,6 +17,9 @@ namespace BW_BE_S4_Ecommerce
         {
             if (!IsPostBack)
             {
+                checkAdmin();
+
+
                 int currentPage = 1;
                 if (Request.QueryString["page"] != null)
                 {
@@ -101,6 +106,56 @@ namespace BW_BE_S4_Ecommerce
                 }
             }
         }
+
+
+        protected void checkAdmin()
+        {
+            // Verifica se il cookie UserDetails esiste
+            if (Request.Cookies["UserDetails"] != null)
+            {
+                // Ottieni il valore del cookie
+                HttpCookie cookie = Request.Cookies["UserDetails"];
+
+                // Controlla se ci sono i valori di userId ed email nel cookie
+                if (cookie["UserId"] != null && cookie["UserEmail"] != null)
+                {
+                    string userId = cookie["UserId"];
+                    string email = cookie["UserEmail"];
+
+                    try
+                    {
+                        Db.conn.Open();
+
+                        string query = "SELECT RuoloId FROM Utente WHERE Id = @userId AND Email = @email";
+
+                        using (SqlCommand cmd = new SqlCommand(query, Db.conn))
+                        {
+                            cmd.Parameters.AddWithValue("@userId", userId);
+                            cmd.Parameters.AddWithValue("@email", email);
+
+                            // Esegui la query e ottieni il risultato
+                            int ruoloId = (int)cmd.ExecuteScalar();
+
+                            // Controlla se l'utente ha il ruolo di amministratore
+                            if (ruoloId == 1)
+                            {
+                                Log._admin = true;
+                            }
+                        }
+
+                        Db.conn.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Gestisci eventuali eccezioni
+                    }
+                }
+            }
+        }
+
+
+
+
 
         protected void ProductRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
         {
