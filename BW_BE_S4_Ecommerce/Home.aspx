@@ -8,19 +8,21 @@
 
 
             <asp:Repeater ID="ProductRepeater" runat="server" OnItemCommand="ProductRepeater_ItemCommand">
-                <ItemTemplate>
-                    <div class="col">
-                        <div class="card h-100">
-                            <img src='<%# Eval("ImmagineUrl") %>' class="card-img-top" alt='<%# Eval("Nome") %>'>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title"><%# Eval("Nome") %></h5>
-                                <p class="card-text">Prezzo: <%# Eval("Prezzo") %></p>
-                                <a href='<%# "Details.aspx?product=" + Eval("Id") %>' class="btn btn-primary mt-auto">Dettagli</a>
-                                <asp:Button ID="DeleteButtonClick" runat="server" CommandName="Delete" CommandArgument='<%# Eval("Id") %>' Text="Cancella" CssClass="btn" OnClientClick="return confirm('Sei sicuro di voler eliminare questo prodotto?')" />
-                            </div>
-                        </div>
-                    </div>
-                </ItemTemplate>
+              <ItemTemplate>
+    <div class="col">
+        <div class="card h-100">
+            <img src='<%# Eval("ImmagineUrl") %>' class="card-img-top img-fluid" alt='<%# Eval("Nome") %>' style="height: 500px;">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-center mb-3"><%# Eval("Nome") %></h5>
+                <p class="card-text text-center">Prezzo: <%# Eval("Prezzo") %></p>
+                <div class="text-center">
+                    <a href='<%# "Details.aspx?product=" + Eval("Id") %>' class="btn btn-primary">Dettagli</a>
+                    <%--<asp:Button ID="DeleteButtonClick" runat="server" CommandName="Delete" CommandArgument='<%# Eval("Id") %>' Text="Cancella" CssClass="btn" OnClientClick="return confirm('Sei sicuro di voler eliminare questo prodotto?')" />--%>
+                </div>
+            </div>
+        </div>
+    </div>
+</ItemTemplate>
             </asp:Repeater>
         </div>
     </div>
