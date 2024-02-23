@@ -14,6 +14,14 @@ namespace BW_BE_S4_Ecommerce
             }
         }
 
+        protected void Annulla_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Home.aspx");
+        }
+
+
+
+
         protected void Login_Click(object sender, EventArgs e)
         {
             string username = usernameBox.Text;

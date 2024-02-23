@@ -240,5 +240,9 @@ namespace BW_BE_S4_Ecommerce
             }
         }
 
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Home.aspx");
+        }
     }
 }
