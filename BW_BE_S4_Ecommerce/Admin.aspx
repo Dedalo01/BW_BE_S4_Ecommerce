@@ -63,41 +63,34 @@
                 <asp:Repeater ID="ProductRepeaterAdmin" runat="server" OnItemCommand="ProductRepeaterAdmin_ItemCommand">
                     <ItemTemplate>
                         <li class="d-flex flex-column mt-3 border p-1 rounded">
-                            <div>
-                                <div class="d-flex justify-content-center">
-                                    <img src='<%# Eval("ImmagineUrl") %>' alt="Immagine del prodotto" width="250" />
+                            <div class="row">
+                                <div class="col-md-4 d-flex justify-content-center align-items-center">
+                                    <img src='<%# Eval("ImmagineUrl") %>' alt="Immagine del prodotto" class="img-fluid" />
+                                </div>
+                                <div class="col-md-8">
+                                    <strong>Nome:</strong>
+                                    <asp:Label ID="NomeLabel" runat="server" Text='<%# Eval("Nome") %>' Visible="true"></asp:Label><br />
 
-                                    <div class="d-flex flex-column justify-content-between">
-                                        <strong>Nome:</strong>
-                                        <asp:Label ID="NomeLabel" runat="server" Text='<%# Eval("Nome") %>' Visible="true"></asp:Label>
-                                        <asp:TextBox ID="NomeTextBox" runat="server" Text='<%# Eval("Nome") %>' Visible="false"></asp:TextBox><br />
+                                    <strong>Prezzo:</strong>
+                                    <asp:Label ID="PrezzoLabel" runat="server" Text='<%# Eval("Prezzo") %>' Visible="true"></asp:Label><br />
 
-                                        <strong>Prezzo:</strong>
-                                        <asp:Label ID="PrezzoLabel" runat="server" Text='<%# Eval("Prezzo") %>' Visible="true"></asp:Label>
-                                        <asp:TextBox ID="PrezzoTextBox" runat="server" Text='<%# Eval("Prezzo") %>' Visible="false"></asp:TextBox><br />
+                                    <strong>Immagine url:</strong>
+                                    <asp:Label ID="ImmagineUrlLabel" runat="server" Text='<%# Eval("ImmagineUrl") %>' Visible="true"></asp:Label><br />
 
-                                        <strong>Immagine url:</strong>
-                                        <asp:Label ID="ImmagineUrlLabel" runat="server" Text='<%# Eval("ImmagineUrl") %>' Visible="true"></asp:Label>
-                                        <asp:TextBox ID="ImmagineUrlTextBox" runat="server" Text='<%# Eval("ImmagineUrl") %>' Visible="false"></asp:TextBox><br />
+                                    <strong>Descrizione:</strong>
+                                    <asp:Label ID="DescrizioneLabel" runat="server" Text='<%# Eval("Descrizione") %>' Visible="true"></asp:Label><br />
 
-                                        <strong>Descrizione:</strong>
-                                        <asp:Label ID="DescrizioneLabel" runat="server" Text='<%# Eval("Descrizione") %>' Visible="true"></asp:Label>
-                                        <asp:TextBox ID="DescrizioneTextBox" runat="server" Text='<%# Eval("Descrizione") %>' Visible="false"></asp:TextBox><br />
-
-
-                                        <div class="d-flex justify-content-center">
-                                            <asp:Button ID="EditButton" runat="server" CssClass="btn btn-primary" Text="Modifica Prodotto" CommandName="Modifica" CommandArgument='<%# Eval("ID") %>' />
-                                            <asp:Button ID="DeleteButton" runat="server" CssClass="btn btn-danger" Text="Cancella Prodotto" CommandName="Delete" CommandArgument='<%# Eval("ID") %>' />
-                                            <asp:Button ID="ConfirmButton" runat="server" CssClass="btn btn-primary" Text="Conferma Modifiche" CommandName="Confirm" CommandArgument='<%# Eval("ID") %>' Visible="false" />
-                                        </div>
+                                    <div class="d-flex justify-content-center mt-3">
+                                        <asp:Button ID="EditButton" runat="server" CssClass="btn btn-primary mr-2" Text="Modifica Prodotto" CommandName="Modifica" CommandArgument='<%# Eval("ID") %>' />
+                                        <asp:Button ID="DeleteButton" runat="server" CssClass="btn btn-danger" Text="Cancella Prodotto" CommandName="Delete" CommandArgument='<%# Eval("ID") %>' />
+                                        <asp:Button ID="ConfirmButton" runat="server" CssClass="btn btn-primary" Text="Conferma Modifiche" CommandName="Confirm" CommandArgument='<%# Eval("ID") %>' Visible="false" />
                                     </div>
                                 </div>
                             </div>
-
                         </li>
-
                     </ItemTemplate>
                 </asp:Repeater>
+
             </ul>
         </div>
     </form>

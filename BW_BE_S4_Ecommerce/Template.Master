@@ -1,5 +1,4 @@
-﻿User
-<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Template.master.cs" Inherits="BW_BE_S4_Ecommerce.Template" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Template.master.cs" Inherits="BW_BE_S4_Ecommerce.Template" %>
 
 <!DOCTYPE html>
 
