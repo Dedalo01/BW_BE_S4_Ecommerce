@@ -58,11 +58,42 @@ namespace BW_BE_S4_Ecommerce
                 SqlCommand cmd = new SqlCommand(selectProductForCartQuery, Db.conn);
                 cmd.Parameters.AddWithValue("@UtenteId", userId);
 
-                SqlDataReader reader = cmd.ExecuteReader();
-                rptCartItems.DataSource = reader;
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                DataTable dataTable = new DataTable();
+                adapter.Fill(dataTable);
+
+                //SqlDataReader reader = cmd.ExecuteReader();
+                //rptCartItems.DataSource = reader;
+                //rptCartItems.DataBind();
+
+                rptCartItems.DataSource = dataTable;
                 rptCartItems.DataBind();
 
-                reader.Close();
+                double totalAmount = 0;
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    int quantity = Convert.ToInt32(row["Quantita"]);
+                    double price = Convert.ToDouble(row["Prezzo"]);
+
+                    double productTotal = quantity * price;
+                    totalAmount += productTotal;
+                }
+
+                LblPrezzo.Text = totalAmount.ToString();
+
+                //while (reader.Read())
+                //{
+                //    int quantity = Convert.ToInt32(reader["pc.Quantita"]);
+                //    int price = Convert.ToInt32(reader["p.Prezzo"]);
+
+                //    double productTotal = quantity * price;
+
+                //    totalAmount += productTotal;
+                //}
+
+
+                //reader.Close();
+                // LblPrezzo.Text = totalAmount.ToString();
             }
             catch (Exception ex)
             {
