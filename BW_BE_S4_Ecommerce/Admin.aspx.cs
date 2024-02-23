@@ -25,6 +25,10 @@ namespace BW_BE_S4_Ecommerce
             {
                 BindProductData();
             }
+            else
+            {
+                MaintainScrollPositionOnPostBack = true;
+            }
         }
 
         private void BindProductData()
