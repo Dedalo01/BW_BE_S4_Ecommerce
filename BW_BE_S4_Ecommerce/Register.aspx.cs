@@ -34,6 +34,7 @@ namespace BW_BE_S4_Ecommerce
             String password = TextBox4.Text;
             String username = TextBox6.Text;
 
+
             try
             {
                 Db.conn.Open();
@@ -61,6 +62,90 @@ namespace BW_BE_S4_Ecommerce
                             Response.Write("La password non corrisponde, ritenta");
                             return;
                         }
+
+
+
+                        string insertQuery = "INSERT INTO Utente (nome, Cognome, Email, Password, Username) VALUES (@Nome, @Cognome, @Email, @Password, @Username)";
+                        using (SqlCommand cmd = new SqlCommand(insertQuery, Db.conn))
+                        {
+                            cmd.Parameters.AddWithValue("@Nome", nome);
+                            cmd.Parameters.AddWithValue("@Cognome", cognome);
+                            cmd.Parameters.AddWithValue("@Email", email);
+                            cmd.Parameters.AddWithValue("@Password", password);
+                            cmd.Parameters.AddWithValue("@Username", username);
+
+                            cmd.ExecuteNonQuery();
+
+                        }
+
+
+                        string query = "SELECT Id FROM Utente WHERE Nome = @Nome";
+
+                        using (SqlCommand command = new SqlCommand(query, Db.conn))
+                        {
+                            command.Parameters.AddWithValue("@Nome", nome);
+
+                            using (SqlDataReader reader = command.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    int utenteId = reader.GetInt32(0);
+                                    reader.Close();
+
+                                    string insertCarrelloQuery = "INSERT INTO Carrello (UtenteId) VALUES (@UtenteId)";
+                                    using (SqlCommand cmdcarrello = new SqlCommand(insertCarrelloQuery, Db.conn))
+                                    {
+                                        cmdcarrello.Parameters.AddWithValue("@UtenteId", utenteId);
+                                        cmdcarrello.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                        }
+
+
+                        string queryCookie = "SELECT Id, Email FROM Utente WHERE Username = @username AND Password = @Password";
+                        using (SqlCommand cmd = new SqlCommand(queryCookie, Db.conn))
+                        {
+                            cmd.Parameters.AddWithValue("@username", username);
+                            cmd.Parameters.AddWithValue("@password", password);
+
+                            SqlDataReader reader = cmd.ExecuteReader();
+                            if (reader.Read())
+                            {
+                                int userId = (int)reader["Id"];
+                                string userEmail = reader["Email"].ToString();
+                                reader.Close();
+
+                                HttpCookie userCookie = new HttpCookie("UserDetails");
+                                userCookie["UserId"] = userId.ToString();
+                                userCookie["UserEmail"] = userEmail;
+
+                                userCookie.Expires = DateTime.Now.AddDays(1);
+
+                                Log.log = true;
+
+                                Response.Cookies.Add(userCookie);
+                            }
+                        }
+
+
+
+
+
+
+
+
+                        TextBox1.Text = "";
+                        TextBox2.Text = "";
+                        TextBox3.Text = "";
+                        TextBox4.Text = "";
+                        TextBox5.Text = "";
+                        TextBox6.Text = "";
+
+
+
+
+
                     }
                     else
                     {
@@ -79,80 +164,6 @@ namespace BW_BE_S4_Ecommerce
 
 
 
-                string insertQuery = "INSERT INTO Utente (nome, Cognome, Email, Password, Username) VALUES (@Nome, @Cognome, @Email, @Password, @Username)";
-                using (SqlCommand cmd = new SqlCommand(insertQuery, Db.conn))
-                {
-                    cmd.Parameters.AddWithValue("@Nome", nome);
-                    cmd.Parameters.AddWithValue("@Cognome", cognome);
-                    cmd.Parameters.AddWithValue("@Email", email);
-                    cmd.Parameters.AddWithValue("@Password", password);
-                    cmd.Parameters.AddWithValue("@Username", username);
-
-                    cmd.ExecuteNonQuery();
-
-                }
-
-
-                string query = "SELECT Id FROM Utente WHERE Nome = @Nome";
-
-                using (SqlCommand command = new SqlCommand(query, Db.conn))
-                {
-                    command.Parameters.AddWithValue("@Nome", nome);
-
-                    using (SqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            int utenteId = reader.GetInt32(0);
-                            reader.Close();
-
-                            string insertCarrelloQuery = "INSERT INTO Carrello (UtenteId) VALUES (@UtenteId)";
-                            using (SqlCommand cmdcarrello = new SqlCommand(insertCarrelloQuery, Db.conn))
-                            {
-                                cmdcarrello.Parameters.AddWithValue("@UtenteId", utenteId);
-                                cmdcarrello.ExecuteNonQuery();
-                            }
-                        }
-                    }
-                }
-
-
-                string queryCookie = "SELECT Id, Email FROM Utente WHERE Username = @username AND Password = @Password";
-                using (SqlCommand cmd = new SqlCommand(queryCookie, Db.conn))
-                {
-                    cmd.Parameters.AddWithValue("@username", username);
-                    cmd.Parameters.AddWithValue("@password", password);
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        int userId = (int)reader["Id"];
-                        string userEmail = reader["Email"].ToString();
-                        reader.Close();
-
-                        HttpCookie userCookie = new HttpCookie("UserDetails");
-                        userCookie["UserId"] = userId.ToString();
-                        userCookie["UserEmail"] = userEmail;
-
-                        userCookie.Expires = DateTime.Now.AddDays(1);
-
-                        Response.Cookies.Add(userCookie);
-                    }
-                }
-
-
-
-
-
-
-
-
-                TextBox1.Text = "";
-                TextBox2.Text = "";
-                TextBox3.Text = "";
-                TextBox4.Text = "";
-                TextBox5.Text = "";
-                TextBox6.Text = "";
 
 
 
@@ -167,8 +178,17 @@ namespace BW_BE_S4_Ecommerce
             }
             finally
             {
-                Db.conn.Close();
-                Response.Redirect("Home.aspx");
+                
+                if (Log.log == true)
+                {
+                    Db.conn.Close();
+                    Response.Redirect("Home.aspx");
+
+                }
+                else
+                {
+                    Db.conn.Close();
+                }
             }
         }
 

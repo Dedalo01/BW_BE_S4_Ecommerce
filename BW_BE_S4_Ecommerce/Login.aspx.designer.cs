@@ -33,13 +33,13 @@ namespace BW_BE_S4_Ecommerce
         protected global::System.Web.UI.WebControls.Label Label1;
 
         /// <summary>
-        /// Controllo usernameBox.
+        /// Controllo EmailBox.
         /// </summary>
         /// <remarks>
         /// Campo generato automaticamente.
         /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox usernameBox;
+        protected global::System.Web.UI.WebControls.TextBox EmailBox;
 
         /// <summary>
         /// Controllo Label2.
@@ -85,5 +85,23 @@ namespace BW_BE_S4_Ecommerce
         /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label3;
+
+        /// <summary>
+        /// Controllo pnlEmailExistsMessage.
+        /// </summary>
+        /// <remarks>
+        /// Campo generato automaticamente.
+        /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlEmailExistsMessage;
+
+        /// <summary>
+        /// Controllo btnLogin.
+        /// </summary>
+        /// <remarks>
+        /// Campo generato automaticamente.
+        /// Per la modifica, spostare la dichiarazione di campo dal file di progettazione al file code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnLogin;
     }
 }
