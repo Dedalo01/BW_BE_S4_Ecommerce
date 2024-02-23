@@ -92,8 +92,6 @@ namespace BW_BE_S4_Ecommerce
                     string userId = userCookie["UserId"];
                     //string userId = "15";
 
-
-
                     string findCartQuery = @"SELECT c.Id FROM Carrello c
                                             JOIN Utente u ON c.UtenteId = u.Id
                                             WHERE u.Id = @userId";
@@ -106,18 +104,41 @@ namespace BW_BE_S4_Ecommerce
                         cmd.Parameters.AddWithValue("userId", userId);
                         object cartIdObj = cmd.ExecuteScalar();
                         string cartId = Convert.ToString(cartIdObj);
+
+                        string checkIdAlreadyInDbQuery = "SELECT ProdottoId FROM ProdottoInCarrello WHERE ProdottoId = @idToCheck AND CarrelloId = @cartId";
+
                         string addCartToDbQuery = "INSERT INTO ProdottoInCarrello (CarrelloId, ProdottoId, Quantita) VALUES (@cartId, @prodId, @qt)";
                         Response.Write(cartId + "<- ID DEL CARRELLO");
 
-                        string checkIdAlreadyInDbQuery = "SELECT ProdottoId FROM ProdottoInCarrello WHERE ProdottoId = @idToCheck";
                         foreach (DataRow row in ShoppingCartDataTable.CartTable.Rows)
                         {
                             SqlCommand checkIdInDb = new SqlCommand(checkIdAlreadyInDbQuery, Db.conn);
                             checkIdInDb.Parameters.AddWithValue("idToCheck", row["ID"].ToString());
-                            //??
-                            object result = checkIdInDb.ExecuteScalar();
+                            checkIdInDb.Parameters.AddWithValue("cartId", cartId);
 
-                            if (result == null)
+                            //object result = checkIdInDb.ExecuteScalar();
+                            //int? res = Convert.ToInt32(result);
+                            //Response.Write("\n\nrisultato di query checkIdInDb -> " + res);
+                            int RowsAffected = checkIdInDb.ExecuteNonQuery();
+
+                            //SqlDataReader checkId = cmd.ExecuteReader();
+
+                            string updateQuery = @"UPDATE ProdottoInCarrello
+                                                        SET Quantita = @quantita
+                                                        WHERE CarrelloId = @cartId AND ProdottoId = @prodId";
+
+
+                            if (RowsAffected > 0)
+                            {
+
+                                SqlCommand updateCmd = new SqlCommand(updateQuery, Db.conn);
+                                updateCmd.Parameters.AddWithValue("quantita", row["Quantita"].ToString());
+                                updateCmd.Parameters.AddWithValue("cartId", cartId);
+                                updateCmd.Parameters.AddWithValue("prodId", row["ID"].ToString());
+
+                                updateCmd.ExecuteNonQuery();
+                            }
+                            else
                             {
 
                                 SqlCommand insertRowInDb = new SqlCommand(addCartToDbQuery, Db.conn);
@@ -126,19 +147,18 @@ namespace BW_BE_S4_Ecommerce
                                 insertRowInDb.Parameters.AddWithValue("qt", row["Quantita"].ToString());
 
                                 insertRowInDb.ExecuteNonQuery();
-                            }
-                            else
-                            {
-                                string updateQuery = @"UPDATE ProdottoInCarrello
-                                                        SET Quantita = @quantita
-                                                        WHERE CarrelloId = @cartId";
 
-                                SqlCommand updateCmd = new SqlCommand(updateQuery, Db.conn);
-                                updateCmd.Parameters.AddWithValue("quantita", row["Quantita"].ToString());
-                                updateCmd.Parameters.AddWithValue("cartId", cartId);
-
-                                updateCmd.ExecuteNonQuery();
                             }
+
+                            //checkId.Close();
+                            // Response.Write("\n\nRisultato SqlDataReader: " + checkId);
+
+                            //SqlCommand insertRowInDb = new SqlCommand(addCartToDbQuery, Db.conn);
+                            //insertRowInDb.Parameters.AddWithValue("cartId", cartId);
+                            //insertRowInDb.Parameters.AddWithValue("prodId", row["ID"].ToString());
+                            //insertRowInDb.Parameters.AddWithValue("qt", row["Quantita"].ToString());
+
+                            //insertRowInDb.ExecuteNonQuery();
                         }
 
                     }
