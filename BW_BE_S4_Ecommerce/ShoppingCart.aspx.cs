@@ -69,6 +69,14 @@ namespace BW_BE_S4_Ecommerce
                 rptCartItems.DataSource = dataTable;
                 rptCartItems.DataBind();
 
+                Db.conn.Open();
+                string retrieveTotalQuery = "SELECT Totale FROM Carrello WHERE Id = @cartId";
+                SqlCommand retrieveCmd = new SqlCommand(retrieveTotalQuery, Db.conn);
+                retrieveCmd.Parameters.AddWithValue("cartId", GetUserCartId(userId));
+                int cartTotale = (int)retrieveCmd.ExecuteScalar();
+
+                LblPrezzo.Text = cartTotale.ToString();
+
                 double totalAmount = 0;
                 foreach (DataRow row in dataTable.Rows)
                 {
@@ -79,21 +87,13 @@ namespace BW_BE_S4_Ecommerce
                     totalAmount += productTotal;
                 }
 
+                string saveTotalInDb = "INSERT INTO Carrello (UtenteId, Totale) VALUES (@userId, @total)";
+                SqlCommand saveTotalInDbCmd = new SqlCommand(saveTotalInDb, Db.conn);
+                saveTotalInDbCmd.Parameters.AddWithValue("userId", userId);
+                saveTotalInDbCmd.Parameters.AddWithValue("total", totalAmount.ToString());
+                saveTotalInDbCmd.ExecuteNonQuery();
                 LblPrezzo.Text = totalAmount.ToString();
 
-                //while (reader.Read())
-                //{
-                //    int quantity = Convert.ToInt32(reader["pc.Quantita"]);
-                //    int price = Convert.ToInt32(reader["p.Prezzo"]);
-
-                //    double productTotal = quantity * price;
-
-                //    totalAmount += productTotal;
-                //}
-
-
-                //reader.Close();
-                // LblPrezzo.Text = totalAmount.ToString();
             }
             catch (Exception ex)
             {
