@@ -5,7 +5,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="main" runat="server">
     <div class="container">
         <div class="row">
-            <asp:Repeater ID="CartRepeater" runat="server" OnItemCommand="CartRepeater_ItemCommand">
+           <%-- <asp:Repeater ID="CartRepeater" runat="server" OnItemCommand="CartRepeater_ItemCommand">
                 <ItemTemplate>
                     <div class="col-12 d-flex gap-3 align-items-center mb-3">
 
@@ -27,7 +27,7 @@
 
                     </div>
                 </ItemTemplate>
-            </asp:Repeater>
+            </asp:Repeater>--%>
 
  <ul id="htmlContent" runat="server" class="m-auto w-50">
     <asp:Repeater ID="rptCartItems" runat="server" OnItemCommand="rptCartItems_ItemCommand">

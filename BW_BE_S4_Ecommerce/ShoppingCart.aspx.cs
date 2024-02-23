@@ -243,53 +243,53 @@ namespace BW_BE_S4_Ecommerce
 
         }
 
-        private void BindCartRepeater()
-        {
+        //private void BindCartRepeater()
+        //{
 
 
-            int userId = GetCurrentUserId();
-            string selectProductForCartQuery = @"SELECT p.Id AS ProdottoId, p.Nome, p.Prezzo, pc.Quantita FROM Carrello c
-                             JOIN ProdottoInCarrello pc ON c.Id = pc.CarrelloId
-                             JOIN Prodotto p ON pc.ProdottoId = p.Id
-                             WHERE c.UtenteId = @UtenteId";
+        //    int userId = GetCurrentUserId();
+        //    string selectProductForCartQuery = @"SELECT p.Id AS ProdottoId, p.Nome, p.Prezzo, pc.Quantita FROM Carrello c
+        //                     JOIN ProdottoInCarrello pc ON c.Id = pc.CarrelloId
+        //                     JOIN Prodotto p ON pc.ProdottoId = p.Id
+        //                     WHERE c.UtenteId = @UtenteId";
 
-            try
-            {
-                Db.conn.Open();
-                SqlCommand cmd = new SqlCommand(selectProductForCartQuery, Db.conn);
-                cmd.Parameters.AddWithValue("@UtenteId", userId);
+        //    try
+        //    {
+        //        Db.conn.Open();
+        //        SqlCommand cmd = new SqlCommand(selectProductForCartQuery, Db.conn);
+        //        cmd.Parameters.AddWithValue("@UtenteId", userId);
 
-                SqlDataReader reader = cmd.ExecuteReader();
-                CartRepeater.DataSource = reader;
-                CartRepeater.DataBind();
+        //        SqlDataReader reader = cmd.ExecuteReader();
+        //        CartRepeater.DataSource = reader;
+        //        CartRepeater.DataBind();
 
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                Response.Write(ex.Message);
-            }
-            finally
-            {
-                Db.conn.Close();
-            }
+        //        reader.Close();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Response.Write(ex.Message);
+        //    }
+        //    finally
+        //    {
+        //        Db.conn.Close();
+        //    }
 
 
-        }
+        //}
 
-        protected void CartRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
-        {
-            if (e.CommandName == "Rimuovi")
-            {
-                int prodottoId = Convert.ToInt32(e.CommandArgument);
+        //protected void CartRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
+        //{
+        //    if (e.CommandName == "Rimuovi")
+        //    {
+        //        int prodottoId = Convert.ToInt32(e.CommandArgument);
 
-                int utenteId = GetCurrentUserId();
+        //        int utenteId = GetCurrentUserId();
 
-                RemoveProductFromCart(utenteId, prodottoId);
+        //        RemoveProductFromCart(utenteId, prodottoId);
 
-                BindCartRepeater();
-            }
-        }
+        //        BindCartRepeater();
+        //    }
+        //}
 
         private void RemoveProductFromCart(int utenteId, int prodottoId)
         {
