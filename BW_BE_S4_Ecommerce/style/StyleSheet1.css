@@ -1,0 +1,52 @@
+﻿h1 {
+    font-size: 8em;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transform: translateY(-50px);
+    font-family: cursive; /* Modifica del tipo di carattere */
+    animation: fadeInUp 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+body {
+ back
+}
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Aggiunge una transizione fluida */
+}
+    .card:hover {
+        transform: scale(1.05); /* Effetto di zoom al passaggio del mouse */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Aggiunge un'ombra sottile al passaggio del mouse */
+    }
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-title {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 1em;
+    color: #555;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }

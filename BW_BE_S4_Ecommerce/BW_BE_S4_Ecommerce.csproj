@@ -78,6 +78,7 @@
     <Content Include="Register.aspx" />
     <Content Include="ShoppingCart.aspx" />
     <Content Include="InsertProduct.aspx" />
+    <Content Include="style\StyleSheet1.css" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
