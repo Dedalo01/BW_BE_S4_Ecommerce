@@ -9,7 +9,7 @@
     <title></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
-<body class="bg-info d-flex justify-content-center align-items-center">
+<%--<body class="bg-info d-flex justify-content-center align-items-center">--%>
     <form id="form1" runat="server">
 
         <div>
