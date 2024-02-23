@@ -105,10 +105,13 @@ namespace BW_BE_S4_Ecommerce
                         object cartIdObj = cmd.ExecuteScalar();
                         string cartId = Convert.ToString(cartIdObj);
 
-                        string checkIdAlreadyInDbQuery = "SELECT ProdottoId FROM ProdottoInCarrello WHERE ProdottoId = @idToCheck AND CarrelloId = @cartId";
+                        string checkIdAlreadyInDbQuery = "SELECT * FROM ProdottoInCarrello WHERE ProdottoId = @idToCheck AND CarrelloId = @cartId";
 
                         string addCartToDbQuery = "INSERT INTO ProdottoInCarrello (CarrelloId, ProdottoId, Quantita) VALUES (@cartId, @prodId, @qt)";
                         Response.Write(cartId + "<- ID DEL CARRELLO");
+                        string updateQuery = @"UPDATE ProdottoInCarrello
+                                                        SET Quantita = @quantita
+                                                        WHERE CarrelloId = @cartId AND ProdottoId = @prodId";
 
                         foreach (DataRow row in ShoppingCartDataTable.CartTable.Rows)
                         {
@@ -116,21 +119,18 @@ namespace BW_BE_S4_Ecommerce
                             checkIdInDb.Parameters.AddWithValue("idToCheck", row["ID"].ToString());
                             checkIdInDb.Parameters.AddWithValue("cartId", cartId);
 
-                            //object result = checkIdInDb.ExecuteScalar();
-                            //int? res = Convert.ToInt32(result);
+                            object result = checkIdInDb.ExecuteScalar();
+                            int? res = Convert.ToInt32(result);
                             //Response.Write("\n\nrisultato di query checkIdInDb -> " + res);
-                            int RowsAffected = checkIdInDb.ExecuteNonQuery();
+                            //int RowsAffected = checkIdInDb.ExecuteNonQuery();
 
                             //SqlDataReader checkId = cmd.ExecuteReader();
 
-                            string updateQuery = @"UPDATE ProdottoInCarrello
-                                                        SET Quantita = @quantita
-                                                        WHERE CarrelloId = @cartId AND ProdottoId = @prodId";
 
 
-                            if (RowsAffected > 0)
+                            if (res != null && res != 0)
                             {
-
+                                // fai UPDATE della quantità se esiste
                                 SqlCommand updateCmd = new SqlCommand(updateQuery, Db.conn);
                                 updateCmd.Parameters.AddWithValue("quantita", row["Quantita"].ToString());
                                 updateCmd.Parameters.AddWithValue("cartId", cartId);
@@ -140,7 +140,7 @@ namespace BW_BE_S4_Ecommerce
                             }
                             else
                             {
-
+                                // inserisci in db se NON esiste
                                 SqlCommand insertRowInDb = new SqlCommand(addCartToDbQuery, Db.conn);
                                 insertRowInDb.Parameters.AddWithValue("cartId", cartId);
                                 insertRowInDb.Parameters.AddWithValue("prodId", row["ID"].ToString());
