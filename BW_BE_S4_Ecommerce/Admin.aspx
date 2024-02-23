@@ -38,7 +38,8 @@
                 <div class="mb-3">
                     <asp:Label ID="Label3" runat="server" CssClass="form-label" Text="Prezzo"></asp:Label>
                     <div>
-                        <asp:TextBox ID="prezzoProdottoBox" runat="server" CssClass="form-control"></asp:TextBox>
+                        <asp:TextBox ID="prezzoProdottoBox" runat="server" CssClass="form-control" type="number"></asp:TextBox>
+
                     </div>
                 </div>
                 <div class="mb-3">
@@ -49,6 +50,9 @@
                 </div>
                 <asp:Button ID="Login" runat="server" Text="Aggiungi Prodotto" OnClick="Inserimento_Click" CssClass="btn btn-primary d-block mx-auto" />
             </div>
+
+
+            <asp:Label ID="LblErrore" runat="server" CssClass="form-label" Text="ImmageUrl"></asp:Label>
 
         </div>
 
